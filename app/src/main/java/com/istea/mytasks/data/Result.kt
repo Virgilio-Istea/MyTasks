@@ -1,4 +1,4 @@
-package com.example.mytasks.data
+package com.istea.mytasks.data
 
 /**
  * A generic class that holds a value with its loading status.

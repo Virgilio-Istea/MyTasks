@@ -9,4 +9,11 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <!-- Strings related to MyTasks-->
+    <string name="createGroup">Crear Grupo</string>
+    <string name="createActivity">Crear Actividad</string>
+    <string name="groupAll">Todos</string>
+    <string name="mainTitle">Grupos</string>
+    <string name="groupNone">Sin Grupo</string>
+    <string name="defaultGroup">Grupo</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.mytasks.ui.login
+package com.istea.mytasks.ui.login
 
 /**
  * Data validation state of the login form.

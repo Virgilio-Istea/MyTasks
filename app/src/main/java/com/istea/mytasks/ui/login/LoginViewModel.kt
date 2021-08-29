@@ -1,13 +1,13 @@
-package com.example.mytasks.ui.login
+package com.istea.mytasks.ui.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import com.example.mytasks.data.LoginRepository
-import com.example.mytasks.data.Result
+import com.istea.mytasks.data.LoginRepository
+import com.istea.mytasks.data.Result
 
-import com.example.mytasks.R
+import com.istea.mytasks.R
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 

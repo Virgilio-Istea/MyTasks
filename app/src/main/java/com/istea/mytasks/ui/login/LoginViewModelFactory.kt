@@ -1,9 +1,9 @@
-package com.example.mytasks.ui.login
+package com.istea.mytasks.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.mytasks.data.LoginDataSource
-import com.example.mytasks.data.LoginRepository
+import com.istea.mytasks.data.LoginDataSource
+import com.istea.mytasks.data.LoginRepository
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

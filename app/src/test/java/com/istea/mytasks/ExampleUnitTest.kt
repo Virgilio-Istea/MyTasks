@@ -1,4 +1,4 @@
-package com.example.mytasks
+package com.istea.mytasks
 
 import org.junit.Test
 

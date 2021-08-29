@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "627556183659",
+    "project_id": "mytasks-9c789",
+    "storage_bucket": "mytasks-9c789.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627556183659:android:a7f91e95441ac8f73bcb2e",
+        "android_client_info": {
+          "package_name": "com.istea.mytasks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "627556183659-73ng8svui55afjdj7hcr2phoa0c4844a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkUxo31YA59tn8hgrqbCrKSoPKbt5rZvc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "627556183659-73ng8svui55afjdj7hcr2phoa0c4844a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,6 @@
-package com.example.mytasks.data
+package com.istea.mytasks.data
 
-import com.example.mytasks.data.model.LoggedInUser
+import com.istea.mytasks.data.model.LoggedInUser
 import java.io.IOException
 
 /**

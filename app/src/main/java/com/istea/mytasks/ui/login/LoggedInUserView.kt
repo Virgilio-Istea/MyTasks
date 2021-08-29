@@ -1,4 +1,4 @@
-package com.example.mytasks.ui.login
+package com.istea.mytasks.ui.login
 
 /**
  * User details post authentication that is exposed to the UI

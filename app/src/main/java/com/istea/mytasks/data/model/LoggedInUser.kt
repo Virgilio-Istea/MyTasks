@@ -1,4 +1,4 @@
-package com.example.mytasks.data.model
+package com.istea.mytasks.data.model
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository

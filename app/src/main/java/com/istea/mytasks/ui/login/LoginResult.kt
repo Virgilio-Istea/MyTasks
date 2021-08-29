@@ -1,4 +1,4 @@
-package com.example.mytasks.ui.login
+package com.istea.mytasks.ui.login
 
 /**
  * Authentication result : success (user details) or error message.
