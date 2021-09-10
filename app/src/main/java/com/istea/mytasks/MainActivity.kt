@@ -5,8 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TableRow
-import com.istea.mytasks.db.FirebaseHelper
-
+import com.istea.mytasks.data.LoginDataSource
+import com.istea.mytasks.data.LoginRepository
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var noGroup: TableRow
     private lateinit var createActivity: Button
     private lateinit var createGroup: Button
-    private lateinit var firebase: FirebaseHelper
+    private lateinit var logout : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         noGroup = findViewById(R.id.group_none)
         createActivity = findViewById(R.id.create_activity)
         createGroup = findViewById(R.id.create_group)
+        logout = findViewById(R.id.logout)
 
         allTasks.setOnClickListener {
             val intent = Intent(this, TasksActivity::class.java)
@@ -45,6 +46,12 @@ class MainActivity : AppCompatActivity() {
         createGroup.setOnClickListener {
             val intent = Intent(this, CreateGroupActivity::class.java)
             startActivity(intent)
+        }
+
+        logout.setOnClickListener {
+            var loginRepository = LoginRepository(LoginDataSource())
+            loginRepository.logout()
+            finish()
         }
 
     }

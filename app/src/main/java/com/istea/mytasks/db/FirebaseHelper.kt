@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.istea.mytasks.data.model.LoggedInUser
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
@@ -61,24 +62,24 @@ class FirebaseHelper {
         }
     }
 
-    fun login(email: String, password: String, activity: Activity){
+    fun login(idToken: String){
         val tag = "Firebase Login"
         val auth = Firebase.auth
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _userResult.value = true
-                    Log.d(tag, "signInWithEmail:success")
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(tag, "signInWithEmail:failure", task.exception)
-                    Toast.makeText(
-                        activity, "Authentication failed. ${task.exception}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    _userResult.value = false
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(tag, "signInWithCredential:success")
+                        _userResult.value = true
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(tag, "signInWithCredential:failure", task.exception)
+                        _userResult.value = false
+                    }
                 }
-            }
+
     }
 
     fun getTasksByUser(user: Int){

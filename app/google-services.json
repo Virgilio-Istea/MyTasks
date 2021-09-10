@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "627556183659-ksh1iasg0invoklie93611lvbn99vmk6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.istea.mytasks",
+            "certificate_hash": "1351a1be59f30d89a232f821370711b7f788dd94"
+          }
+        },
+        {
           "client_id": "627556183659-73ng8svui55afjdj7hcr2phoa0c4844a.apps.googleusercontent.com",
           "client_type": 3
         }

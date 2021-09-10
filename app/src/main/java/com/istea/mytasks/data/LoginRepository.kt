@@ -1,5 +1,6 @@
 package com.istea.mytasks.data
 
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.istea.mytasks.data.model.LoggedInUser
 
 /**
@@ -10,8 +11,7 @@ import com.istea.mytasks.data.model.LoggedInUser
 class LoginRepository(val dataSource: LoginDataSource) {
 
     // in-memory cache of the loggedInUser object
-    var user: LoggedInUser? = null
-        private set
+    private var user: LoggedInUser? = null
 
     val isLoggedIn: Boolean
         get() = user != null
@@ -27,9 +27,9 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(token : String): Result<LoggedInUser> {
         // handle login
-        val result = dataSource.login(username, password)
+        val result = dataSource.login(token)
 
         if (result is Result.Success) {
             setLoggedInUser(result.data)

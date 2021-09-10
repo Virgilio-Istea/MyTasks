@@ -6,15 +6,31 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/main_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="@string/mainTitle"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="150dp">
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/mainTitle"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/action_logout"
+            style="?android:attr/buttonBarStyle"/>
+
+    </LinearLayout>
 
     <TableLayout
         android:id="@+id/table"
@@ -23,7 +39,6 @@
         app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintTop_toBottomOf="@id/main_title"
         android:overScrollMode="ifContentScrolls">
-
 
         <TableRow
             android:layout_width="match_parent"
@@ -131,5 +146,11 @@
             style="?android:attr/buttonBarStyle"/>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteY="11dp"></LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
