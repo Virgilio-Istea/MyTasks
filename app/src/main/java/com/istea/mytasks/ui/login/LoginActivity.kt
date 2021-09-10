@@ -1,12 +1,9 @@
 package com.istea.mytasks.ui.login
 
-import android.app.Activity
 import android.content.Intent
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.ProgressBar
@@ -25,8 +22,8 @@ import com.istea.mytasks.db.FirebaseHelper
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var loginViewModel: LoginViewModel
     private lateinit var auth: FirebaseAuth
+    private lateinit var firebase: FirebaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +36,7 @@ class LoginActivity : AppCompatActivity() {
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         auth = Firebase.auth
+        firebase = FirebaseHelper()
         val currentUser = auth.currentUser
         if(currentUser == null){
             googleSignInClient.signOut()
@@ -52,26 +50,18 @@ class LoginActivity : AppCompatActivity() {
         val signInButton = findViewById<SignInButton>(R.id.sign_in_button)
         val loading = findViewById<ProgressBar>(R.id.loading)
 
-        signInButton.setSize(SignInButton.SIZE_STANDARD)
-
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-                .get(LoginViewModel::class.java)
-
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
+        firebase.userResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
-
-            loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
+            loading.visibility = View.INVISIBLE
+            if (loginResult){
+                updateUiWithUser(LoggedInUserView(Firebase.auth.currentUser!!.displayName!!))
             }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
+            else{
+                showLoginFailed()
             }
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            finish()
         })
+
+        signInButton.setSize(SignInButton.SIZE_STANDARD)
 
         signInButton.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
@@ -91,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-                loginViewModel.login(account.idToken!!)
+                firebase.login(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
@@ -112,9 +102,8 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
+    private fun showLoginFailed() {
         Toast.makeText(applicationContext, "Authentication failed.", Toast.LENGTH_LONG).show()
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

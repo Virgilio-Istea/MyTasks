@@ -5,8 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TableRow
-import com.istea.mytasks.data.LoginDataSource
-import com.istea.mytasks.data.LoginRepository
+import android.widget.Toast
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.istea.mytasks.db.FirebaseHelper
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var createActivity: Button
     private lateinit var createGroup: Button
     private lateinit var logout : Button
+    private lateinit var firebase : FirebaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         createActivity = findViewById(R.id.create_activity)
         createGroup = findViewById(R.id.create_group)
         logout = findViewById(R.id.logout)
+
+        firebase = FirebaseHelper()
 
         allTasks.setOnClickListener {
             val intent = Intent(this, TasksActivity::class.java)
@@ -49,8 +53,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         logout.setOnClickListener {
-            var loginRepository = LoginRepository(LoginDataSource())
-            loginRepository.logout()
+            Toast.makeText(applicationContext, "Logged Out.", Toast.LENGTH_LONG).show()
+            firebase.logout()
             finish()
         }
 
