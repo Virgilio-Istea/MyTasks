@@ -17,4 +17,22 @@
     <string name="mainTitle">Grupos</string>
     <string name="groupNone">Sin Grupo</string>
     <string name="defaultGroup">Grupo</string>
+    <string name="crear_actividad">Crear Actividad</string>
+    <string name="hora_recordatorio">Hora Recordatorio</string>
+    <string name="fecha_recordatorio">Fecha Recordatorio</string>
+    <string name="hora_de_actividad">Hora de Actividad</string>
+    <string name="descripcion">Descripcion</string>
+    <string name="fecha_de_actividad">Fecha de Actividad</string>
+    <string name="titulo_de_la_actividad">Titulo de la Actividad</string>
+    <string name="crear_grupo">Crear Grupo</string>
+    <string name="titulo_del_grupo">Titulo del Grupo</string>
+    <string name="volver">Volver</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="collapsible_arrow">Collapsible Arrow</string>
+    <string name="modify">Modificar</string>
+    <string name="delete">Borrar</string>
+    <string name="descr_overflow_button">popup menu</string>
+    <string name="modificar_grupo">Modificar Grupo</string>
+    <string name="radio_button">radio button</string>
+    <string name="modificar_actividad">Modificar Actividad</string>
 </resources>

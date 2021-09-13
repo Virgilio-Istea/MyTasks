@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateTaskActivity">
+    tools:context=".ui.create.CreateTaskActivity">
 
     <TextView
         android:id="@+id/ta_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Crear actividad"
+        android:text="@string/crear_actividad"
         android:textColor="@color/purple_500"
         android:textSize="30sp"
         android:textStyle="bold"
@@ -29,12 +29,13 @@
         android:layout_marginTop="48dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Titulo de la Actividad"
+        android:hint="@string/titulo_de_la_actividad"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ta_title" />
+        app:layout_constraintTop_toBottomOf="@+id/ta_title"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/ta_et_task_fecha"
@@ -45,8 +46,8 @@
         android:layout_marginEnd="24dp"
         android:clickable="true"
         android:ems="10"
-        android:focusable="false"
-        android:hint="Fecha de Actividad"
+        android:focusable="true"
+        android:hint="@string/fecha_de_actividad"
         android:inputType="date"
         android:maxLines="1"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -54,7 +55,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_titulo"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/ta_et_task_descripcion"
@@ -64,7 +66,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Descripcion"
+        android:hint="@string/descripcion"
         android:inputType="textMultiLine"
         android:lines="3"
         android:maxLines="3"
@@ -74,7 +76,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_fecha"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:autofillHints="" />
 
     <Button
         android:id="@+id/ta_btn_task_descripcion_audio"
@@ -95,14 +98,15 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Hora de Actividad"
+        android:hint="@string/hora_de_actividad"
         android:inputType="time"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/ta_et_task_fecha"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_titulo"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/ta_et_task_fecha_recordatorio"
@@ -112,14 +116,15 @@
         android:layout_marginTop="28dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Fecha Recordatorio"
+        android:hint="@string/fecha_recordatorio"
         android:inputType="date"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
-        app:layout_constraintVertical_bias="0.005" />
+        app:layout_constraintVertical_bias="0.005"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/ta_et_task_hora_recordatorio"
@@ -129,14 +134,15 @@
         android:layout_marginTop="28dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Hora Recordatorio"
+        android:hint="@string/hora_recordatorio"
         android:inputType="time"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.285"
         app:layout_constraintStart_toEndOf="@+id/ta_et_task_fecha_recordatorio"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
-        app:layout_constraintVertical_bias="0.006" />
+        app:layout_constraintVertical_bias="0.006"
+        android:autofillHints="" />
 
     <Spinner
         android:id="@+id/ta_sp_groups"
@@ -159,7 +165,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:text="Crear Actividad"
+        android:text="@string/crear_actividad"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

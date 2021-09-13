@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyTasks">
-        <activity android:name="com.istea.mytasks.CreateTaskActivity"></activity>
-        <activity android:name="com.istea.mytasks.CreateGroupActivity" />
-        <activity android:name="com.istea.mytasks.TasksActivity" />
-        <activity android:name="com.istea.mytasks.MainActivity" />
+        <activity android:name="com.istea.mytasks.ui.create.CreateTaskActivity"></activity>
+        <activity android:name="com.istea.mytasks.ui.create.CreateGroupActivity" />
+        <activity android:name="com.istea.mytasks.ui.view.TasksActivity" />
+        <activity android:name="com.istea.mytasks.ui.view.MainActivity" />
         <activity
             android:name="com.istea.mytasks.ui.login.LoginActivity"
             android:label="@string/app_name">

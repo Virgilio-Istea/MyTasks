@@ -15,7 +15,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.istea.mytasks.MainActivity
+import com.istea.mytasks.ui.view.MainActivity
 
 import com.istea.mytasks.R
 import com.istea.mytasks.db.FirebaseHelper

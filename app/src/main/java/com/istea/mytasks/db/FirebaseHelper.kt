@@ -3,32 +3,31 @@ package com.istea.mytasks.db
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.istea.mytasks.model.LoggedInUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
+import com.istea.mytasks.model.Group
+import com.istea.mytasks.model.Task
 
 class FirebaseHelper {
 
     private var db : FirebaseFirestore
     private var settings : FirebaseFirestoreSettings
 
-    private val _loginResult = MutableLiveData<LoggedInUser>()
-    val loginResult: LiveData<LoggedInUser> = _loginResult
-
     private val _userResult = MutableLiveData<Boolean>()
     val userResult: LiveData<Boolean> = _userResult
 
-    private val _maxIdResult = MutableLiveData<Int>()
-    val maxIdResult: LiveData<Int> = _maxIdResult
+    private val _tasksResult = MutableLiveData<QuerySnapshot>()
+    val tasksResult: LiveData<QuerySnapshot> = _tasksResult
 
-    private val _reportResult = MutableLiveData<QuerySnapshot>()
-    val reportResult: LiveData<QuerySnapshot> = _reportResult
+    private val _groupsResult = MutableLiveData<QuerySnapshot>()
+    val groupsResult: LiveData<QuerySnapshot> = _groupsResult
 
     init{
         db = Firebase.firestore
@@ -38,6 +37,10 @@ class FirebaseHelper {
             cacheSizeBytes = FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED
         }
         db.firestoreSettings = settings
+    }
+
+    fun getUser() : String{
+        return Firebase.auth.currentUser!!.uid
     }
 
     fun login(idToken: String){
@@ -59,24 +62,115 @@ class FirebaseHelper {
             }
     }
 
-    fun getTasksByUser(user: Int){
+    fun getTasksByUser(user: String, group: String){
         db = Firebase.firestore
-        val userDB = db.collection("tasks").whereEqualTo("userId",user)
+        val tasksDB = db.collection("tasks")
+                .whereEqualTo("userId",user)
+
+        if (group != "Todos") {
+            tasksDB.whereEqualTo("activityGroups", group)
+        }
 
         // Create a query against the collection.
-        userDB.get()
+        tasksDB.get()
             .addOnSuccessListener { documents ->
-                _reportResult.value = documents
+                _tasksResult.value = documents
             }
             .addOnFailureListener { exception ->
                 Log.w("", "Error getting documents: ", exception)
             }
     }
 
-//    fun createGroup(task : Task){
-//        db = Firebase.firestore
-//        db.collection("meals").add(meal)
-//    }
+    fun getGroupsByUser(user: String){
+        db = Firebase.firestore
+        val groupsDB = db.collection("groups")
+                .whereEqualTo("userId",user)
+
+        // Create a query against the collection.
+        groupsDB.get()
+                .addOnSuccessListener { documents ->
+                    _groupsResult.value = documents
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("", "Error getting documents: ", exception)
+                }
+    }
+
+    fun createGroup(group : Group){
+        db = Firebase.firestore
+        db.collection("groups").add(group)
+            .addOnSuccessListener { document ->
+                db.collection("groups").document(document.id).set(hashMapOf(
+                        "documentId" to document.id), SetOptions.merge())
+            }
+            .addOnFailureListener { e ->
+                Log.w("", "Error adding document", e)
+            }
+    }
+
+    fun deleteGroup(group : Group){
+        db = Firebase.firestore
+
+        modifyTasksGroup(group)
+
+        db.collection("groups").document(group.documentId).delete()
+
+    }
+
+    fun modifyTasksGroup(group : Group) {
+        db = Firebase.firestore
+        val tasksDB = db.collection("tasks")
+                .whereEqualTo("userId",group.userId)
+                .whereEqualTo("activityGroup", group.name)
+
+        tasksDB.get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents){
+                        db.collection("tasks").document(document.id).set(hashMapOf(
+                                "activityGroup" to ""), SetOptions.merge())
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("", "Error getting documents: ", exception)
+                }
+
+    }
+
+    fun modifyGroup(group : Group) {
+        db = Firebase.firestore
+        db.collection("groups").document(group.documentId).set(group)
+    }
+
+    fun createTask(task: Task){
+        db = Firebase.firestore
+        db.collection("tasks").add(task)
+                .addOnSuccessListener { document ->
+                    db.collection("tasks").document(document.id).set(hashMapOf(
+                            "documentId" to document.id), SetOptions.merge())
+                }
+                .addOnFailureListener { e ->
+                    Log.w("", "Error adding document", e)
+                }
+    }
+
+    fun deleteTask(task : Task){
+        db = Firebase.firestore
+        db.collection("tasks").document(task.documentId).delete()
+    }
+
+    fun modifyTask(task : Task){
+        db = Firebase.firestore
+        db.collection("tasks").document(task.documentId).set(task)
+    }
+
+    fun toggleTaskCompletion(task : Task) {
+        db = Firebase.firestore
+
+        db.collection("tasks").document(task.documentId).set(hashMapOf(
+                "done" to !task.done), SetOptions.merge())
+
+    }
+
 
     fun logout(){
         Firebase.auth.signOut()

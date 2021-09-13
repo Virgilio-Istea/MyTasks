@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.view.MainActivity">
 
     <LinearLayout
         android:id="@+id/main_title"
@@ -16,7 +16,7 @@
 
         <TextView
 
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/mainTitle"
@@ -32,90 +32,13 @@
 
     </LinearLayout>
 
-    <TableLayout
-        android:id="@+id/table"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewGroups"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/buttons"
         app:layout_constraintTop_toBottomOf="@id/main_title"
-        android:overScrollMode="ifContentScrolls">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.legacy.widget.Space
-                android:layout_height="10dp"/>
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/group_all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true">
-
-            <androidx.legacy.widget.Space
-                android:layout_width="10dp"
-                android:layout_height="10dp" />
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/groupAll"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_weight="2"
-                android:background="?android:attr/listDivider" />
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/group_none"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true">
-
-            <androidx.legacy.widget.Space
-                android:layout_width="10dp"
-                android:layout_height="10dp" />
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/groupNone"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.legacy.widget.Space
-                android:layout_width="10dp"
-                android:layout_height="10dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-
-        </TableRow>
-    </TableLayout>
+        android:layout_weight="1" />
 
     <LinearLayout
         android:id="@+id/buttons"
@@ -146,11 +69,5 @@
             style="?android:attr/buttonBarStyle"/>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteY="11dp"></LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
