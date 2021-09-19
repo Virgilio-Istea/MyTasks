@@ -31,7 +31,7 @@ class CreateGroupActivity : AppCompatActivity() {
 
         val create = intent.getBooleanExtra("create", true)
 
-        grupo = Group("","","")
+        grupo = Group("","","", arrayListOf())
 
         if (!create){
             grupo = intent.getSerializableExtra("group") as Group
@@ -46,7 +46,8 @@ class CreateGroupActivity : AppCompatActivity() {
             if (create){
             val group = Group("",
                     Firebase.auth.currentUser!!.uid,
-                    titleGroup.text.toString())
+                    titleGroup.text.toString(),
+                    arrayListOf())
             firebase.createGroup(group)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -55,7 +56,8 @@ class CreateGroupActivity : AppCompatActivity() {
                 firebase.modifyGroup(
                         Group(grupo.documentId,
                               grupo.userId,
-                              titleGroup.text.toString()))
+                              titleGroup.text.toString(),
+                              grupo.tasks))
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             }

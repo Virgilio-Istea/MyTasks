@@ -27,46 +27,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c64367b1-d323-49eb-9779-045628b03960" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/adapter/GroupAdapter.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/adapter/TaskAdapter.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/interface/GroupClickListener.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/ExpandableTasks.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/Group.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/TaskList.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/create/CreateGroupActivity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/create/CreateTaskActivity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/view/TasksActivity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/baseline_radio_button_checked_24.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/baseline_radio_button_unchecked_24.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_arrow_down.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_arrow_drop_up.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_overflow_holo_dark.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/group_item.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/task_child_item.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/task_parent_item.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/menu/item_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/CreateGroupActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/CreateTaskActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/view/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/TasksActivity.kt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/db/FirebaseHelper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/db/FirebaseHelper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/LoggedInUser.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/Group.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/Group.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/Task.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/Task.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/login/LoginActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/login/LoginActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_create_group.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_create_group.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_create_task.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_create_task.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_tasks.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_tasks.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/create/CreateGroupActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/create/CreateGroupActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/create/CreateTaskActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/create/CreateTaskActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/view/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/view/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/view/TasksActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/ui/view/TasksActivity.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[Pixel_3a_API_30_x86]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[Pixel_4_XL_API_23]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -130,8 +106,8 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_3a_API_30_x86" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-09-12T04:00:56.939Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_4_XL_API_23" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-09-13T18:30:07.574Z" />
     <property name="ResourceManagerPrefKey.ResourceType" value="DRAWABLE" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -262,6 +238,14 @@
       <option name="presentableId" value="Default" />
       <updated>1630190805428</updated>
     </task>
+    <task id="LOCAL-00001" summary="update google services">
+      <created>1631985957747</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1631985957748</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -280,6 +264,8 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/MyTasks" />
     </ignored-roots>
+    <MESSAGE value="update google services" />
+    <option name="LAST_COMMIT_MESSAGE" value="update google services" />
   </component>
   <component name="WindowStateProjectService">
     <state x="166" y="230" width="774" height="541" key="#Gradle" timestamp="1630709239100">
@@ -323,10 +309,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="791" y="270" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631305219382" />
-    <state x="93" y="93" width="1350" height="678" key="AVDManager" timestamp="1631419420925">
+    <state x="93" y="93" width="1350" height="678" key="AVDManager" timestamp="1631557811743">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="93" y="93" width="1350" height="678" key="AVDManager/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631419420925" />
+    <state x="93" y="93" width="1350" height="678" key="AVDManager/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631557811743" />
     <state x="162" y="228" key="AndroidCreateResourceFileDialog" timestamp="1631462785741">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -349,50 +335,50 @@
     </state>
     <state x="592" y="228" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1630709236170" />
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1630419062750" />
-    <state width="1488" height="224" key="GridCell.Tab.0.bottom" timestamp="1631484585341">
+    <state width="1491" height="196" key="GridCell.Tab.0.bottom" timestamp="1632010989595">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1488" height="224" key="GridCell.Tab.0.bottom/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631484585341" />
-    <state width="1491" height="223" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1630714067157" />
+    <state width="1488" height="223" key="GridCell.Tab.0.bottom/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631558905891" />
+    <state width="1491" height="196" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1632010989595" />
     <state width="1877" height="281" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1630427688631" />
-    <state width="1488" height="224" key="GridCell.Tab.0.center" timestamp="1631484585341">
+    <state width="1491" height="196" key="GridCell.Tab.0.center" timestamp="1632010989595">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1488" height="224" key="GridCell.Tab.0.center/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631484585341" />
-    <state width="1491" height="223" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1630714067157" />
+    <state width="1488" height="223" key="GridCell.Tab.0.center/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631558905891" />
+    <state width="1491" height="196" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1632010989595" />
     <state width="1877" height="281" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1630427688631" />
-    <state width="1488" height="224" key="GridCell.Tab.0.left" timestamp="1631484585340">
+    <state width="1491" height="196" key="GridCell.Tab.0.left" timestamp="1632010989595">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1488" height="224" key="GridCell.Tab.0.left/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631484585340" />
-    <state width="1491" height="223" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1630714067157" />
+    <state width="1488" height="223" key="GridCell.Tab.0.left/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631558905891" />
+    <state width="1491" height="196" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1632010989595" />
     <state width="1877" height="281" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1630427688631" />
-    <state width="1488" height="224" key="GridCell.Tab.0.right" timestamp="1631484585341">
+    <state width="1491" height="196" key="GridCell.Tab.0.right" timestamp="1632010989595">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1488" height="224" key="GridCell.Tab.0.right/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631484585341" />
-    <state width="1491" height="223" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1630714067157" />
+    <state width="1488" height="223" key="GridCell.Tab.0.right/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631558905891" />
+    <state width="1491" height="196" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1632010989595" />
     <state width="1877" height="281" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1630427688631" />
-    <state width="1488" height="224" key="GridCell.Tab.1.bottom" timestamp="1631484583881">
+    <state width="1491" height="196" key="GridCell.Tab.1.bottom" timestamp="1632010989596">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1488" height="224" key="GridCell.Tab.1.bottom/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631484583881" />
-    <state width="1491" height="223" key="GridCell.Tab.1.bottom/0.0.1536.864@0.0.1536.864" timestamp="1630714065737" />
-    <state width="1488" height="224" key="GridCell.Tab.1.center" timestamp="1631484583881">
+    <state width="1491" height="225" key="GridCell.Tab.1.bottom/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631556165445" />
+    <state width="1491" height="196" key="GridCell.Tab.1.bottom/0.0.1536.864@0.0.1536.864" timestamp="1632010989596" />
+    <state width="1491" height="196" key="GridCell.Tab.1.center" timestamp="1632010989595">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1488" height="224" key="GridCell.Tab.1.center/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631484583881" />
-    <state width="1491" height="223" key="GridCell.Tab.1.center/0.0.1536.864@0.0.1536.864" timestamp="1630714065737" />
-    <state width="1488" height="224" key="GridCell.Tab.1.left" timestamp="1631484583881">
+    <state width="1491" height="225" key="GridCell.Tab.1.center/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631556165445" />
+    <state width="1491" height="196" key="GridCell.Tab.1.center/0.0.1536.864@0.0.1536.864" timestamp="1632010989595" />
+    <state width="1491" height="196" key="GridCell.Tab.1.left" timestamp="1632010989595">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1488" height="224" key="GridCell.Tab.1.left/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631484583881" />
-    <state width="1491" height="223" key="GridCell.Tab.1.left/0.0.1536.864@0.0.1536.864" timestamp="1630714065737" />
-    <state width="1488" height="224" key="GridCell.Tab.1.right" timestamp="1631484583881">
+    <state width="1491" height="225" key="GridCell.Tab.1.left/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631556165445" />
+    <state width="1491" height="196" key="GridCell.Tab.1.left/0.0.1536.864@0.0.1536.864" timestamp="1632010989595" />
+    <state width="1491" height="196" key="GridCell.Tab.1.right" timestamp="1632010989595">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1488" height="224" key="GridCell.Tab.1.right/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631484583881" />
-    <state width="1491" height="223" key="GridCell.Tab.1.right/0.0.1536.864@0.0.1536.864" timestamp="1630714065737" />
+    <state width="1491" height="225" key="GridCell.Tab.1.right/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631556165445" />
+    <state width="1491" height="196" key="GridCell.Tab.1.right/0.0.1536.864@0.0.1536.864" timestamp="1632010989595" />
     <state x="698" y="178" key="IDE.errors.dialog" timestamp="1630193761557">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -406,21 +392,31 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="584" y="210" key="chooseDestDirectoryDialog/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631318083860" />
-    <state x="475" y="165" width="954" height="558" key="find.popup" timestamp="1631482041219">
+    <state x="138" y="48" width="787" height="624" key="find.popup" timestamp="1632002033952">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="475" y="165" width="954" height="558" key="find.popup/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631482041219" />
-    <state x="138" y="48" width="640" height="624" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1630762267239" />
-    <state x="424" y="196" key="run.anything.popup" timestamp="1631481580892">
+    <state x="138" y="48" width="787" height="624" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1632002033952" />
+    <state x="424" y="196" key="run.anything.popup" timestamp="1632003555009">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="424" y="196" key="run.anything.popup/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631481580892" />
+    <state x="424" y="196" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1632003555009" />
     <state x="812" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1631465536296">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="812" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1536.864/-1920.0.1280.720@0.0.1536.864" timestamp="1631465536296" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/istea/mytasks/model/Group.kt</url>
+          <line>12</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo typeName="java.lang.Object" fieldName="shadow$_klass_" />

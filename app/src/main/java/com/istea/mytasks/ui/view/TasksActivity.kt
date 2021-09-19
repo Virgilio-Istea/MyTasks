@@ -9,8 +9,6 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.istea.mytasks.R
 import com.istea.mytasks.adapter.TaskAdapter
 import com.istea.mytasks.db.FirebaseHelper
@@ -18,10 +16,10 @@ import com.istea.mytasks.model.ExpandableTasks
 import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.Task
 import com.istea.mytasks.model.TaskList
-import com.istea.mytasks.ui.create.CreateGroupActivity
 import com.istea.mytasks.ui.create.CreateTaskActivity
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class TasksActivity : AppCompatActivity() {
 
@@ -36,7 +34,8 @@ class TasksActivity : AppCompatActivity() {
 
         firebase = FirebaseHelper()
 
-        val grupo = intent.getSerializableExtra("group") as Group
+        val group = intent.getSerializableExtra("group") as Group
+        val groups = intent.getSerializableExtra("groups") as HashMap<String, Group>
 
         createActivity = findViewById(R.id.create_activity)
         title = findViewById(R.id.group_title)
@@ -44,57 +43,45 @@ class TasksActivity : AppCompatActivity() {
 
         recycleViewTasks.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL,false)
 
-        title.text = grupo.name
+        title.text = group.name
 
-        firebase.getTasksByUser(firebase.getUser(), grupo.documentId)
+        var tasks: ArrayList<Task> = group.tasks
 
-        val tasks = arrayListOf<Task>()
-
-        firebase.tasksResult.observe(this, {
-            for(task in it){
-                if (grupo.name == "Todos" || grupo.documentId == task.data["activityGroup"].toString()){
-                    tasks.add(queryToTask(task))
+        if (group.name == "Todos"){
+            group.tasks = arrayListOf()
+            for (groupAux in groups){
+                for (task in groupAux.value.tasks){
+                    tasks.add(task)
                 }
             }
+        }
 
-            val taskList = toExpandableList(tasks)
+        val taskList = toExpandableList(tasks)
 
-            recycleViewTasks.adapter = TaskAdapter(taskList){selectedItem ->
-                when(selectedItem){
-                    is TaskAdapter.ListenerType.SelectTaskListener -> {
-                        val intent = Intent(this@TasksActivity, CreateTaskActivity::class.java)
-                        intent.putExtra("task", selectedItem.task)
-                        intent.putExtra("create", false)
-                        startActivity(intent)
-                    }
-                    is TaskAdapter.ListenerType.PopupMenuListener -> {
-                        showPopup(selectedItem.view, selectedItem.task)
-                    }
-                    is TaskAdapter.ListenerType.ToggleTaskCompletionListener -> {
-                        firebase.toggleTaskCompletion(selectedItem.task)
-                        finish();
-                        startActivity(intent);
-                    }
+        recycleViewTasks.adapter = TaskAdapter(taskList){selectedItem ->
+            when(selectedItem){
+                is TaskAdapter.ListenerType.SelectTaskListener -> {
+                    val intent = Intent(this@TasksActivity, CreateTaskActivity::class.java)
+                    intent.putExtra("task", selectedItem.task)
+                    intent.putExtra("create", false)
+                    startActivity(intent)
+                }
+                is TaskAdapter.ListenerType.PopupMenuListener -> {
+                    showPopup(selectedItem.view, selectedItem.task, group,groups)
+                }
+                is TaskAdapter.ListenerType.ToggleTaskCompletionListener -> {
+                    firebase.toggleTaskCompletion(selectedItem.task)
+                    selectedItem.task.done = !selectedItem.task.done
+                    refreshActivity(group,groups)
                 }
             }
-        })
+        }
 
         createActivity.setOnClickListener {
             val intent = Intent(this, CreateTaskActivity::class.java)
-            intent.putExtra("group", grupo)
+            intent.putExtra("group", group)
             startActivity(intent)
         }
-    }
-
-    private fun queryToTask(query: QueryDocumentSnapshot) : Task{
-        return Task(firebase.getUser(),
-                    query.data["title"].toString(),
-                    (query.data["dateTask"] as Timestamp).toDate(),
-                    query.data["descriptionTask"].toString(),
-                    (query.data["dateReminder"] as Timestamp).toDate(),
-                    query.data["activityGroup"].toString(),
-                    query.data["done"].toString().toBoolean(),
-                    query.id)
     }
 
     private fun toExpandableList(tasks : ArrayList<Task>) : ArrayList<ExpandableTasks>{
@@ -119,7 +106,7 @@ class TasksActivity : AppCompatActivity() {
         return expandableModel
     }
 
-    private fun showPopup(v: View, task: Task) {
+    private fun showPopup(v: View, task: Task, group : Group, groups : HashMap<String, Group>) {
         PopupMenu(this, v).apply {
             setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -131,9 +118,10 @@ class TasksActivity : AppCompatActivity() {
                         true
                     }
                     R.id.action_delete -> {
-                        firebase.deleteTask(task)
-                        finish();
-                        startActivity(intent);
+                        firebase.deleteTask(task, task.groupId)
+                        group.tasks.remove(task)
+                        groups[group.documentId] = group
+                        refreshActivity(group,groups)
                         true
                     }
                     else -> false
@@ -142,5 +130,16 @@ class TasksActivity : AppCompatActivity() {
             inflate(R.menu.item_menu)
             show()
         }
+    }
+
+    private fun refreshActivity(group : Group, groups : HashMap<String, Group>){
+        finish()
+        //TODO: keep opened lists open
+        overridePendingTransition(0, 0);
+        val intent = Intent(this, TasksActivity::class.java)
+        intent.putExtra("groups", groups)
+        intent.putExtra("group", group)
+        startActivity(intent)
+        overridePendingTransition(0, 0);
     }
 }

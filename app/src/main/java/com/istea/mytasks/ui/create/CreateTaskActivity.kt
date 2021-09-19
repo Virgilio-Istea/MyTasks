@@ -40,8 +40,8 @@ class CreateTaskActivity : AppCompatActivity() {
 
         val create = intent.getBooleanExtra("create", true)
 
-        grupo = Group("","","")
-        task = Task("","",Calendar.getInstance().time,"",Calendar.getInstance().time,"",false,"")
+        grupo = Group("","","", arrayListOf())
+        task = Task("","",Calendar.getInstance().time,"",Calendar.getInstance().time,false,"")
 
         initializeFields()
 
@@ -51,8 +51,8 @@ class CreateTaskActivity : AppCompatActivity() {
         if (!create){
             task = intent.getSerializableExtra("task") as Task
 
-            val dateFormatter = SimpleDateFormat("dd/M/yyyy", Locale.ENGLISH)
-            val hourFormatter = SimpleDateFormat("hh:mm", Locale.ENGLISH)
+            val dateFormatter = SimpleDateFormat("dd/M/yyyy", Locale.getDefault())
+            val hourFormatter = SimpleDateFormat("hh:mm", Locale.getDefault())
 
             if (task.title.isNotEmpty()){
                 titleTask.setText(task.title)
@@ -62,7 +62,7 @@ class CreateTaskActivity : AppCompatActivity() {
                 dateReminder.setText(dateFormatter.format(task.dateReminder))
                 hourReminder.setText(hourFormatter.format(task.dateReminder))
 
-                grupo = Group(task.activityGroup,"","")
+                grupo = Group(task.groupId,"","", arrayListOf())
                 createActivity.text = getString(R.string.modificar_actividad)
             }
         }
@@ -71,10 +71,11 @@ class CreateTaskActivity : AppCompatActivity() {
 
         createActivity.setOnClickListener{
             if (create){
-                firebase.createTask(createTaskObject(false,""))
+                firebase.createTask(createTaskObject(false),
+                                    (activityGroups.selectedItem as Group).documentId)
             }
             else {
-                firebase.modifyTask(createTaskObject(task.done, task.documentId))
+                firebase.modifyTask(createTaskObject(task.done),task)
             }
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -99,19 +100,20 @@ class CreateTaskActivity : AppCompatActivity() {
         val items = ArrayList<Group>()
 
         firebase.groupsResult.observe(this, {
-            items.add(Group("","","Sin Grupo"))
 
             var selectedGroup = grupo
             for (group in it) {
                 items.add(Group(
                         group.data["documentId"].toString(),
                         group.data["userId"].toString(),
-                        group.data["name"].toString()))
+                        group.data["name"].toString(),
+                        group.data["tasks"] as ArrayList<Task>))
                 if (grupo.documentId == group.data["documentId"].toString()){
                     selectedGroup = Group(
                             group.data["documentId"].toString(),
                             group.data["userId"].toString(),
-                            group.data["name"].toString())
+                            group.data["name"].toString(),
+                    group.data["tasks"] as ArrayList<Task>)
                 }
             }
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
@@ -123,7 +125,7 @@ class CreateTaskActivity : AppCompatActivity() {
         })
     }
 
-    private fun createTaskObject(done : Boolean,documentId : String) : Task{
+    private fun createTaskObject(done : Boolean) : Task{
         val formatter = SimpleDateFormat("dd/M/yyyy hh:mm", Locale.ENGLISH)
 
         val dateTask: Date = formatter.parse("${dateTask.text} ${hourTask.text}")!!
@@ -135,8 +137,7 @@ class CreateTaskActivity : AppCompatActivity() {
                 dateTask,
                 descriptionTask.text.toString(),
                 dateReminder,
-                (activityGroups.selectedItem as Group).documentId,
                 done,
-                documentId)
+                (activityGroups.selectedItem as Group).documentId)
     }
 }

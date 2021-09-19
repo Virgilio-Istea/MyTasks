@@ -6,10 +6,9 @@ import java.io.Serializable
 data class Task(
         val userId: String,
         val title: String,
-        val dateTask : Date,
+        var dateTask : Date,
         val descriptionTask : String,
-        val dateReminder : Date,
-        val activityGroup : String,
-        val done : Boolean,
-        val documentId : String
+        var dateReminder : Date,
+        var done : Boolean,
+        val groupId : String
 ) : Serializable
