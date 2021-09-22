@@ -1,12 +1,12 @@
-package com.istea.mytasks.ui.components
+package com.istea.mytasks.model
 
 import android.widget.EditText
 
-data class TaskState(val titleTask: Int? = null,
-                     val dateTask: Int? = null,
-                     val hourTask: Int? = null,
-                     val descriptionTask: Int? = null,
-                     val dateReminder: Int? = null,
-                     val hourReminder: Int? = null,
-
+data class TaskState(val titleTaskError: Int? = null,
+                     val dateTaskError: Int? = null,
+                     val hourTaskError: Int? = null,
+                     val descriptionTaskError: Int? = null,
+                     val dateReminderError: Int? = null,
+                     val hourReminderError: Int? = null,
+                     val isDataValid: Boolean = false
                      )

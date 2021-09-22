@@ -4,19 +4,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.istea.mytasks.R
 import com.istea.mytasks.db.FirebaseHelper
 import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.Task
+import com.istea.mytasks.model.TaskViewModelFactory
 import com.istea.mytasks.ui.view.MainActivity
+import com.istea.mytasks.ui.viewmodel.TaskViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class CreateTaskActivity : AppCompatActivity() {
+
+    private lateinit var taskviewmodel: TaskViewModel
 
     private lateinit var titleTask : EditText
     private lateinit var dateTask : EditText
@@ -37,6 +42,20 @@ class CreateTaskActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_task)
 
         firebase = FirebaseHelper()
+
+
+        taskviewmodel = ViewModelProvider(this, TaskViewModelFactory())
+                .get(TaskViewModel::class.java)
+
+        taskviewmodel.taskFormState.observe(this@CreateTaskActivity, androidx.lifecycle.Observer {
+            val taskState = it ?: return@Observer
+
+            createActivity.isEnabled = taskState.isDataValid
+
+            if (taskState.titleTaskError != null) {
+                titleTask.error = getString(taskState.titleTaskError)
+            }
+        })
 
         val create = intent.getBooleanExtra("create", true)
 

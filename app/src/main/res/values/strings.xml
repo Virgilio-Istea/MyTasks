@@ -35,4 +35,5 @@
     <string name="modificar_grupo">Modificar Grupo</string>
     <string name="radio_button">radio button</string>
     <string name="modificar_actividad">Modificar Actividad</string>
+    <string name="nombre_task_invalido">Not a valid username</string>
 </resources>
