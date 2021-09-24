@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private var items = ArrayList<Group>()
     private var groups = HashMap<String, Group>()
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -57,14 +58,19 @@ class MainActivity : AppCompatActivity() {
             items.add(Group("",firebase.getUser(),"Todos", arrayListOf()))
             for(group in it){
                 tasksAux = arrayListOf()
-                var tasks = group.data["tasks"]
+                val tasks = group.data["tasks"]
                 for (task in tasks as ArrayList<Map<String,Any>>){
                     taskAux = Task(task["userId"].toString(),
                             task["title"].toString(),
                             (task["dateTask"] as Timestamp).toDate(),
                             task["descriptionTask"].toString(),
-                            (task["dateReminder"] as Timestamp).toDate(),
-                            task["done"] as Boolean,
+                            if (task["dateReminder"] == null){
+                                null
+                            }
+                            else{
+                                (task["dateReminder"] as Timestamp).toDate()
+                                },
+                            task["status"] as Boolean,
                             task["groupId"].toString())
                     tasksAux.add(taskAux)
                 }

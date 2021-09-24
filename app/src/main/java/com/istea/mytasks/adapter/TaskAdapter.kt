@@ -1,5 +1,6 @@
 package com.istea.mytasks.adapter
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,7 @@ import com.istea.mytasks.R
 import com.istea.mytasks.model.ExpandableTasks
 import com.istea.mytasks.model.Task
 
-class TaskAdapter (private val dataSet: ArrayList<ExpandableTasks>, val onButtonClickListener:(selectedItem: ListenerType) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>()
+class TaskAdapter (private val context: Context, private val dataSet: ArrayList<ExpandableTasks>, val onButtonClickListener:(selectedItem: ListenerType) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -39,11 +40,12 @@ class TaskAdapter (private val dataSet: ArrayList<ExpandableTasks>, val onButton
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val row = dataSet[position]
+
         when(row.type){
             ExpandableTasks.PARENT -> {
                 when (row.parent.done) {
-                    true -> (holder as ParentViewHolder).completed.text = "Listo (${row.parent.tasks.count()})"
-                    false -> (holder as ParentViewHolder).completed.text = "Para Hacer (${row.parent.tasks.count()})"
+                    true -> (holder as ParentViewHolder).completed.text = context.getString(R.string.taskStatus, "Listo", row.parent.tasks.count())
+                    false -> (holder as ParentViewHolder).completed.text = context.getString(R.string.taskStatus,"Para Hacer", row.parent.tasks.count())
                 }
 
                 holder.closeImage.setOnClickListener {
@@ -64,7 +66,7 @@ class TaskAdapter (private val dataSet: ArrayList<ExpandableTasks>, val onButton
 
                 (holder as ChildViewHolder).taskName.text = row.child.title
 
-                if (row.child.done) {
+                if (row.child.status) {
                     holder.complete.setImageResource(R.drawable.baseline_radio_button_checked_24)
                 }
                 else {

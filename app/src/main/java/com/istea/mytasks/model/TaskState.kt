@@ -1,7 +1,5 @@
 package com.istea.mytasks.model
 
-import android.widget.EditText
-
 data class TaskState(val titleTaskError: Int? = null,
                      val dateTaskError: Int? = null,
                      val hourTaskError: Int? = null,

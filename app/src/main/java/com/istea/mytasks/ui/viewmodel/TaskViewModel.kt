@@ -1,7 +1,5 @@
 package com.istea.mytasks.ui.viewmodel
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,16 +7,16 @@ import com.istea.mytasks.R
 import com.istea.mytasks.datevalidator.DateValidatorWithDateFormatter
 import com.istea.mytasks.model.TaskState
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
-class TaskViewModel(): ViewModel() {
+class TaskViewModel : ViewModel() {
 
     private val _taskForm = MutableLiveData<TaskState>()
     val taskFormState: LiveData<TaskState> = _taskForm
 
+    private val titleMaxChars = 20
+    private val descMaxChars = 300
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun taskDataChanged(title: String,
                         description: String,
                         dateTime: String,
@@ -28,20 +26,20 @@ class TaskViewModel(): ViewModel() {
                         remember: Boolean
                         ) {
 
-        var dataValid: Boolean = true;
-        var oldActivityDate: Boolean = true;
+        var dataValid = true
+        val oldActivityDate = true
 
         if (!isTitleTaskEmpty(title)) {
             _taskForm.value = TaskState(titleTaskError = R.string.nombre_task_invalido)
             dataValid = false
             }
 
-        if (!isTitleTaskLongMax(title, 20)) {
+        if (!isTitleTaskLongMax(title)) {
             _taskForm.value = TaskState(titleTaskError = R.string.largo_task_invalido)
             dataValid = false
         }
 
-        if (!isDescriptionLongMax(description, 300)) {
+        if (!isDescriptionLongMax(description)) {
             _taskForm.value = TaskState(descriptionTaskError = R.string.largo_descripcion_task_invalido)
             dataValid = false
         }
@@ -68,10 +66,7 @@ class TaskViewModel(): ViewModel() {
                 _taskForm.value = TaskState(hourReminderError = R.string.hora_actividad_recordatorio_invalido)
                 dataValid = false
             }
-        } else {
-            dataValid = true
         }
-
 
         if (!isActivityRememberDateOlderThanActivityDate(dateTime, hour, dateTimeReminder, hourReminder)) {
             _taskForm.value = TaskState(dateReminderError = R.string.fecha_recordatorio_superior_fecha_actividad)
@@ -89,49 +84,42 @@ class TaskViewModel(): ViewModel() {
 
     private fun isTitleTaskEmpty(title: String): Boolean {
         if (title.count() > 0) {
-            return true;
+            return true
         }
 
-        return false;
+        return false
     }
 
-    private fun isTitleTaskLongMax(title: String, long: Int): Boolean {
-        if (title.count() <= long) {
-            return true;
+    private fun isTitleTaskLongMax(title: String): Boolean {
+        if (title.count() <= titleMaxChars) {
+            return true
         }
 
-        return false;
+        return false
     }
 
-    private fun isDescriptionLongMax(description: String, long: Int): Boolean {
-        if (description.count() <= long) {
-            return true;
+    private fun isDescriptionLongMax(description: String): Boolean {
+        if (description.count() <= descMaxChars) {
+            return true
         }
 
-        return false;
+        return false
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun isActivityDateValid(dateTime: String): Boolean {
+        val formatter = SimpleDateFormat("dd/M/yyyy", Locale.ENGLISH)
+        val dateValidator = DateValidatorWithDateFormatter(formatter)
 
-        var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
-        var dateValidator = DateValidatorWithDateFormatter(dateTimeFormatter)
-
-        var isValid = dateValidator.isValid(dateTime)
-
-        return isValid
+        return dateValidator.isValid(dateTime)
     }
 
 
     private fun isActivityHourValid(hour: String): Boolean {
-        var regex = Regex("([01]?[0-9]|2[0-3]):[0-5][0-9]")
+        val regex = Regex("([01]?[0-9]|2[0-3]):[0-5][0-9]")
 
-        var isValid = regex.matches(hour)
-
-        return isValid
+        return regex.matches(hour)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun isActivityRememberDateOlderThanActivityDate(dateTime: String,
                                                             hour: String,
                                                             dateTimeReminder: String,
@@ -159,14 +147,10 @@ class TaskViewModel(): ViewModel() {
         val dateTask: Date = formatter.parse("$dateTime $hour")!!
         val dateReminder: Date = formatter.parse("$dateTimeReminder $hourReminder")!!
 
-        if(dateTask != null && dateReminder != null) {
-            if(dateReminder.after(dateTask)) {
-                return false
-            }
+        if(dateReminder.after(dateTask)) {
+            return false
         }
 
-        return true;
+        return true
     }
-
-
 }

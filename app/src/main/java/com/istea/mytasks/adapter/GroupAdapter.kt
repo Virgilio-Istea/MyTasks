@@ -8,11 +8,9 @@ import android.widget.TableRow
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.istea.mytasks.R
-import com.istea.mytasks.`interface`.GroupClickListener
 import com.istea.mytasks.model.Group
-import com.istea.mytasks.model.Task
 
-class GroupAdapter(private val dataSet: ArrayList<Group>, private val onButtonClickListener:(selectedItem: GroupAdapter.ListenerType) -> Unit) : RecyclerView.Adapter<GroupAdapter.ViewHolder>()
+class GroupAdapter(private val dataSet: ArrayList<Group>, private val onButtonClickListener:(selectedItem: ListenerType) -> Unit) : RecyclerView.Adapter<GroupAdapter.ViewHolder>()
 {
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){

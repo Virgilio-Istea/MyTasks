@@ -28,6 +28,7 @@ class TasksActivity : AppCompatActivity() {
     private lateinit var firebase : FirebaseHelper
     private lateinit var recycleViewTasks: RecyclerView
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tasks)
@@ -45,7 +46,7 @@ class TasksActivity : AppCompatActivity() {
 
         title.text = group.name
 
-        var tasks: ArrayList<Task> = group.tasks
+        val tasks: ArrayList<Task> = group.tasks
 
         if (group.name == "Todos"){
             group.tasks = arrayListOf()
@@ -58,7 +59,7 @@ class TasksActivity : AppCompatActivity() {
 
         val taskList = toExpandableList(tasks)
 
-        recycleViewTasks.adapter = TaskAdapter(taskList){selectedItem ->
+        recycleViewTasks.adapter = TaskAdapter(this, taskList){selectedItem ->
             when(selectedItem){
                 is TaskAdapter.ListenerType.SelectTaskListener -> {
                     val intent = Intent(this@TasksActivity, CreateTaskActivity::class.java)
@@ -71,7 +72,7 @@ class TasksActivity : AppCompatActivity() {
                 }
                 is TaskAdapter.ListenerType.ToggleTaskCompletionListener -> {
                     firebase.toggleTaskCompletion(selectedItem.task)
-                    selectedItem.task.done = !selectedItem.task.done
+                    selectedItem.task.status = !selectedItem.task.status
                     refreshActivity(group,groups)
                 }
             }
@@ -90,7 +91,7 @@ class TasksActivity : AppCompatActivity() {
         val taskListDone = arrayListOf<Task>()
 
         for (task in tasks){
-            when (task.done){
+            when (task.status){
                 false -> taskListUndone.add(task)
                 true -> taskListDone.add(task)
             }
@@ -135,11 +136,11 @@ class TasksActivity : AppCompatActivity() {
     private fun refreshActivity(group : Group, groups : HashMap<String, Group>){
         finish()
         //TODO: keep opened lists open
-        overridePendingTransition(0, 0);
+        overridePendingTransition(0, 0)
         val intent = Intent(this, TasksActivity::class.java)
         intent.putExtra("groups", groups)
         intent.putExtra("group", group)
         startActivity(intent)
-        overridePendingTransition(0, 0);
+        overridePendingTransition(0, 0)
     }
 }

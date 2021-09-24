@@ -79,10 +79,10 @@ class FirebaseHelper {
 
     fun createGroup(group : Group){
         db = Firebase.firestore
-        var newGroup = db.collection("groups").document()
+        val newGroup = db.collection("groups").document()
         group.documentId = newGroup.id
         newGroup.set(group)
-            .addOnSuccessListener { _ ->
+            .addOnSuccessListener {
 
             }
             .addOnFailureListener { e ->
@@ -142,7 +142,7 @@ class FirebaseHelper {
     }
 
     fun toggleTaskCompletion(task : Task) {
-        val toggledTask = Task(task.userId,task.title,task.dateTask,task.descriptionTask,task.dateReminder,!task.done,task.groupId)
+        val toggledTask = Task(task.userId,task.title,task.dateTask,task.descriptionTask,task.dateReminder,!task.status,task.groupId)
 
         modifyTask(toggledTask, task)
     }

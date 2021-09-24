@@ -3,7 +3,6 @@ package com.istea.mytasks.ui.create
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
 import android.widget.Button
 import android.widget.EditText
 import com.google.firebase.auth.ktx.auth
@@ -15,13 +14,13 @@ import com.istea.mytasks.ui.view.MainActivity
 
 class CreateGroupActivity : AppCompatActivity() {
 
-    lateinit var titleGroup : EditText
-    lateinit var createGroup : Button
-    lateinit var back : Button
+    private lateinit var titleGroup : EditText
+    private lateinit var createGroup : Button
+    private lateinit var back : Button
 
-    lateinit var firebase : FirebaseHelper
+    private lateinit var firebase : FirebaseHelper
 
-    lateinit var grupo : Group
+    private lateinit var grupo : Group
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
