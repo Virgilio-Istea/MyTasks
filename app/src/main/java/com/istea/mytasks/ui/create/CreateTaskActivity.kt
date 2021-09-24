@@ -1,9 +1,13 @@
 package com.istea.mytasks.ui.create
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.*
+import android.widget.CompoundButton
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -27,9 +31,11 @@ class CreateTaskActivity : AppCompatActivity() {
     private lateinit var dateTask : EditText
     private lateinit var hourTask : EditText
     private lateinit var descriptionTask : EditText
-    private lateinit var dateReminder : EditText
-    private lateinit var hourReminder : EditText
+    private lateinit var dateReminderTask : EditText
+    private lateinit var hourReminderTask : EditText
     private lateinit var activityGroups : Spinner
+
+    private lateinit var recordar : Switch
     private lateinit var createActivity : Button
 
     private lateinit var firebase : FirebaseHelper
@@ -37,6 +43,7 @@ class CreateTaskActivity : AppCompatActivity() {
     private lateinit var grupo : Group
     private lateinit var task : Task
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_task)
@@ -55,12 +62,33 @@ class CreateTaskActivity : AppCompatActivity() {
             if (taskState.titleTaskError != null) {
                 titleTask.error = getString(taskState.titleTaskError)
             }
+
+            if (taskState.descriptionTaskError != null) {
+                descriptionTask.error = getString(taskState.descriptionTaskError)
+            }
+
+            if (taskState.dateTaskError != null) {
+                dateTask.error = getString(taskState.dateTaskError)
+            }
+
+            if (taskState.hourTaskError != null) {
+                hourTask.error = getString(taskState.hourTaskError)
+            }
+
+            if (taskState.dateReminderError != null) {
+                dateReminderTask.error = getString(taskState.dateReminderError)
+            }
+
+            if (taskState.hourReminderError != null) {
+                hourReminderTask.error = getString(taskState.hourReminderError)
+            }
+
         })
 
         val create = intent.getBooleanExtra("create", true)
 
-        grupo = Group("","","", arrayListOf())
-        task = Task("","",Calendar.getInstance().time,"",Calendar.getInstance().time,false,"")
+        grupo = Group("", "", "", arrayListOf())
+        task = Task("", "", Calendar.getInstance().time, "", Calendar.getInstance().time, false, "")
 
         initializeFields()
 
@@ -78,10 +106,10 @@ class CreateTaskActivity : AppCompatActivity() {
                 dateTask.setText(dateFormatter.format(task.dateTask))
                 hourTask.setText(hourFormatter.format(task.dateTask))
                 descriptionTask.setText(task.descriptionTask)
-                dateReminder.setText(dateFormatter.format(task.dateReminder))
-                hourReminder.setText(hourFormatter.format(task.dateReminder))
+                dateReminderTask.setText(dateFormatter.format(task.dateReminder))
+                hourReminderTask.setText(hourFormatter.format(task.dateReminder))
 
-                grupo = Group(task.groupId,"","", arrayListOf())
+                grupo = Group(task.groupId, "", "", arrayListOf())
                 createActivity.text = getString(R.string.modificar_actividad)
             }
         }
@@ -91,24 +119,144 @@ class CreateTaskActivity : AppCompatActivity() {
         createActivity.setOnClickListener{
             if (create){
                 firebase.createTask(createTaskObject(false),
-                                    (activityGroups.selectedItem as Group).documentId)
+                        (activityGroups.selectedItem as Group).documentId)
             }
             else {
-                firebase.modifyTask(createTaskObject(task.done),task)
+                firebase.modifyTask(createTaskObject(task.done), task)
             }
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
+
+
+
+        titleTask.doAfterTextChanged {
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )
+        }
+
+        descriptionTask.doAfterTextChanged {
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )
+        }
+
+        dateTask.doAfterTextChanged {
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )
+        }
+
+        hourTask.doAfterTextChanged {
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )
+        }
+
+        dateReminderTask.doAfterTextChanged {
+
+            if(dateReminderTask.text.toString() != ""){
+                taskviewmodel.taskDataChanged(
+                        titleTask.text.toString(),
+                        descriptionTask.text.toString(),
+                        dateTask.text.toString(),
+                        hourTask.text.toString(),
+                        dateReminderTask.text.toString(),
+                        hourReminderTask.text.toString(),
+                        recordar.isChecked
+                )
+            } else {
+                dateReminderTask.error = null
+            }
+
+
+
+        }
+
+        hourReminderTask.doAfterTextChanged {
+
+            if(hourReminderTask.text.toString() != ""){
+                taskviewmodel.taskDataChanged(
+                        titleTask.text.toString(),
+                        descriptionTask.text.toString(),
+                        dateTask.text.toString(),
+                        hourTask.text.toString(),
+                        dateReminderTask.text.toString(),
+                        hourReminderTask.text.toString(),
+                        recordar.isChecked
+                )
+            } else {
+                hourReminderTask.error = null
+            }
+
+
+
+        }
+
+        recordar.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )
+
+            if(recordar.isChecked) {
+                dateReminderTask.isEnabled = true
+                hourReminderTask.isEnabled = true
+            } else {
+                dateReminderTask.isEnabled = false
+                dateReminderTask.setText("")
+                dateReminderTask.error = null
+
+                hourReminderTask.isEnabled = false
+                hourReminderTask.setText("")
+                hourReminderTask.error = null
+            }
+        })
+
     }
+
+
 
     private fun initializeFields(){
         titleTask = findViewById(R.id.ta_et_task_titulo)
         dateTask = findViewById(R.id.ta_et_task_fecha)
         hourTask = findViewById(R.id.ta_et_task_hora)
         descriptionTask = findViewById(R.id.ta_et_task_descripcion)
-        dateReminder = findViewById(R.id.ta_et_task_fecha_recordatorio)
-        hourReminder = findViewById(R.id.ta_et_task_hora_recordatorio)
+        dateReminderTask = findViewById(R.id.ta_et_task_fecha_recordatorio)
+        hourReminderTask = findViewById(R.id.ta_et_task_hora_recordatorio)
         activityGroups = findViewById(R.id.ta_sp_groups)
+
+        recordar = findViewById(R.id.ta_et_task_recordar)
         createActivity = findViewById(R.id.ta_bt_createTask)
     }
 
@@ -127,12 +275,12 @@ class CreateTaskActivity : AppCompatActivity() {
                         group.data["userId"].toString(),
                         group.data["name"].toString(),
                         group.data["tasks"] as ArrayList<Task>))
-                if (grupo.documentId == group.data["documentId"].toString()){
+                if (grupo.documentId == group.data["documentId"].toString()) {
                     selectedGroup = Group(
                             group.data["documentId"].toString(),
                             group.data["userId"].toString(),
                             group.data["name"].toString(),
-                    group.data["tasks"] as ArrayList<Task>)
+                            group.data["tasks"] as ArrayList<Task>)
                 }
             }
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
@@ -144,11 +292,12 @@ class CreateTaskActivity : AppCompatActivity() {
         })
     }
 
-    private fun createTaskObject(done : Boolean) : Task{
+    private fun createTaskObject(done: Boolean) : Task{
         val formatter = SimpleDateFormat("dd/M/yyyy hh:mm", Locale.ENGLISH)
 
         val dateTask: Date = formatter.parse("${dateTask.text} ${hourTask.text}")!!
-        val dateReminder: Date = formatter.parse("${dateReminder.text} ${hourReminder.text}")!!
+        val dateReminder = formatter.parse("${dateReminderTask.text} ${hourReminderTask.text}")!!
+
 
         return Task(
                 Firebase.auth.currentUser!!.uid,

@@ -115,16 +115,17 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="24dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/fecha_recordatorio"
         android:inputType="date"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
-        app:layout_constraintVertical_bias="0.005"
-        android:autofillHints="" />
+        app:layout_constraintVertical_bias="0.137" />
 
     <EditText
         android:id="@+id/ta_et_task_hora_recordatorio"
@@ -133,16 +134,17 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="24dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/hora_recordatorio"
         android:inputType="time"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.285"
+        app:layout_constraintHorizontal_bias="0.375"
         app:layout_constraintStart_toEndOf="@+id/ta_et_task_fecha_recordatorio"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
-        app:layout_constraintVertical_bias="0.006"
-        android:autofillHints="" />
+        app:layout_constraintVertical_bias="0.136" />
 
     <Spinner
         android:id="@+id/ta_sp_groups"
@@ -154,10 +156,10 @@
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_fecha_recordatorio"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.017" />
 
     <Button
         android:id="@+id/ta_bt_createTask"
@@ -170,5 +172,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ta_sp_groups" />
+
+    <Switch
+        android:id="@+id/ta_et_task_recordar"
+        android:layout_width="243dp"
+        android:layout_height="27dp"
+        android:text="Hacerme Acordar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.142"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
+        app:layout_constraintVertical_bias="0.123" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
