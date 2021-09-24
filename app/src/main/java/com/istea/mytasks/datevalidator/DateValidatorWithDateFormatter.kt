@@ -8,6 +8,7 @@ class DateValidatorWithDateFormatter(private var dateFormat: SimpleDateFormat) :
     override fun isValid(dateStr: String): Boolean {
 
         try {
+            this.dateFormat.isLenient = false;
             this.dateFormat.parse(dateStr)
         } catch (e: ParseException) {
             return false

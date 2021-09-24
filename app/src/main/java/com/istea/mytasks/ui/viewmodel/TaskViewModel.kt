@@ -107,7 +107,7 @@ class TaskViewModel : ViewModel() {
     }
 
     private fun isActivityDateValid(dateTime: String): Boolean {
-        val formatter = SimpleDateFormat("dd/M/yyyy", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val dateValidator = DateValidatorWithDateFormatter(formatter)
 
         return dateValidator.isValid(dateTime)
@@ -143,7 +143,7 @@ class TaskViewModel : ViewModel() {
             return true
         }
 
-        val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.ENGLISH)
+        val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.getDefault())
         val dateTask: Date = formatter.parse("$dateTime $hour")!!
         val dateReminder: Date = formatter.parse("$dateTimeReminder $hourReminder")!!
 
