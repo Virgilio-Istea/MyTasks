@@ -33,7 +33,7 @@ class CreateTaskActivity : AppCompatActivity() {
     private lateinit var hourReminderTask : EditText
     private lateinit var activityGroups : Spinner
 
-    private lateinit var recordar : SwitchCompat
+    private lateinit var recordar : Switch
     private lateinit var createActivity : Button
 
     private lateinit var firebase : FirebaseHelper
