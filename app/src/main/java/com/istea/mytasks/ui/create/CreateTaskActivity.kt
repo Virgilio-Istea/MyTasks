@@ -223,11 +223,9 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             } else {
                 dateReminderTask.isEnabled = false
                 dateReminderTask.setText("")
-                dateReminderTask.error = null
 
                 hourReminderTask.isEnabled = false
                 hourReminderTask.setText("")
-                hourReminderTask.error = null
             }
         }
 
@@ -287,8 +285,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         dateTask.keyListener = null
         dateReminderTask.keyListener = null
         dateTask.setText(setTodayDate())
-
-
     }
 
     private fun setTodayDate(): String {
@@ -360,7 +356,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        var date:String = "$dayOfMonth/$month/$year"
+        var correctMonth = month + 1
+        var date:String = "$dayOfMonth/$correctMonth/$year"
 
         if(view?.tag == "dateTask") {
             dateTask.setText(date)
