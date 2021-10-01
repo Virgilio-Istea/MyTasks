@@ -15,6 +15,7 @@ import com.istea.mytasks.R
 import com.istea.mytasks.db.FirebaseHelper
 import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.Task
+import com.istea.mytasks.model.TaskState
 import com.istea.mytasks.model.TaskViewModelFactory
 import com.istea.mytasks.ui.view.MainActivity
 import com.istea.mytasks.ui.viewmodel.TaskViewModel
@@ -42,6 +43,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private lateinit var grupo : Group
     private lateinit var task : Task
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -217,6 +219,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             if (recordar.isChecked) {
                 dateReminderTask.isEnabled = true
                 hourReminderTask.isEnabled = true
+                dateReminderTask.setText(setTodayDate())
             } else {
                 dateReminderTask.isEnabled = false
                 dateReminderTask.setText("")
@@ -232,15 +235,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         dateTask.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
             if(hasFocus) {
                 showDatePickerDialog(v, "dateTask")
-                taskviewmodel.taskDataChanged(
-                    titleTask.text.toString(),
-                    descriptionTask.text.toString(),
-                    dateTask.text.toString(),
-                    hourTask.text.toString(),
-                    dateReminderTask.text.toString(),
-                    hourReminderTask.text.toString(),
-                    recordar.isChecked
-                )
             }
         }
 
@@ -292,8 +286,17 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         createActivity.isEnabled = false
         dateTask.keyListener = null
         dateReminderTask.keyListener = null
+        dateTask.setText(setTodayDate())
 
 
+    }
+
+    private fun setTodayDate(): String {
+        var calendar = Calendar.getInstance();
+
+        var dateFormat = SimpleDateFormat("dd/MM/yyyy");
+        var date = dateFormat.format(calendar.getTime());
+        return date
     }
 
 
@@ -361,11 +364,10 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         if(view?.tag == "dateTask") {
             dateTask.setText(date)
+
         } else if(view?.tag == "dateReminderTask") {
             dateReminderTask.setText(date)
         }
-
-
     }
 
 }

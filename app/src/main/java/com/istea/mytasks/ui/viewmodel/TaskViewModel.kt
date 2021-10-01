@@ -43,10 +43,6 @@ class TaskViewModel : ViewModel() {
             dataValid = false
         }
 
-        if (!isActivityDateValid(dateTime)) {
-            _taskForm.value = TaskState(dateTaskError = R.string.fecha_actividad_invalido)
-            dataValid = false
-        }
 
         if (!isActivityHourValid(hour)) {
             _taskForm.value = TaskState(hourTaskError = R.string.hora_actividad_invalido)
@@ -54,11 +50,6 @@ class TaskViewModel : ViewModel() {
         }
 
         if(remember) {
-            if (!isActivityDateValid(dateTimeReminder)) {
-                _taskForm.value = TaskState(dateReminderError = R.string.fecha_actividad_recordatorio_invalido)
-                dataValid = false
-            }
-
             if (!isActivityHourValid(hourReminder)) {
                 _taskForm.value = TaskState(hourReminderError = R.string.hora_actividad_recordatorio_invalido)
                 dataValid = false
