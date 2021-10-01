@@ -27,7 +27,6 @@ class TaskViewModel : ViewModel() {
                         ) {
 
         var dataValid = true
-        val oldActivityDate = true
 
         if (!isTitleTaskEmpty(title)) {
             _taskForm.value = TaskState(titleTaskError = R.string.nombre_task_invalido)
@@ -44,11 +43,9 @@ class TaskViewModel : ViewModel() {
             dataValid = false
         }
 
-        if(oldActivityDate) {
-            if (!isActivityDateValid(dateTime)) {
-                _taskForm.value = TaskState(dateTaskError = R.string.fecha_actividad_invalido)
-                dataValid = false
-            }
+        if (!isActivityDateValid(dateTime)) {
+            _taskForm.value = TaskState(dateTaskError = R.string.fecha_actividad_invalido)
+            dataValid = false
         }
 
         if (!isActivityHourValid(hour)) {

@@ -1,10 +1,12 @@
 package com.istea.mytasks.ui.create
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.ktx.auth
@@ -21,7 +23,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class CreateTaskActivity : AppCompatActivity() {
+class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
     private lateinit var taskviewmodel: TaskViewModel
 
@@ -117,8 +119,10 @@ class CreateTaskActivity : AppCompatActivity() {
 
         createActivity.setOnClickListener{
             if (create){
-                firebase.createTask(createTaskObject(false),
-                        (activityGroups.selectedItem as Group).documentId)
+                firebase.createTask(
+                    createTaskObject(false),
+                    (activityGroups.selectedItem as Group).documentId
+                )
             }
             else {
                 firebase.modifyTask(createTaskObject(task.status), task)
@@ -131,94 +135,65 @@ class CreateTaskActivity : AppCompatActivity() {
 
         titleTask.doAfterTextChanged {
             taskviewmodel.taskDataChanged(
-                    titleTask.text.toString(),
-                    descriptionTask.text.toString(),
-                    dateTask.text.toString(),
-                    hourTask.text.toString(),
-                    dateReminderTask.text.toString(),
-                    hourReminderTask.text.toString(),
-                    recordar.isChecked
-            )
-        }
+                titleTask.text.toString(),
+                descriptionTask.text.toString(),
+                dateTask.text.toString(),
+                hourTask.text.toString(),
+                dateReminderTask.text.toString(),
+                hourReminderTask.text.toString(),
+                recordar.isChecked
+            )}
 
         descriptionTask.doAfterTextChanged {
             taskviewmodel.taskDataChanged(
-                    titleTask.text.toString(),
-                    descriptionTask.text.toString(),
-                    dateTask.text.toString(),
-                    hourTask.text.toString(),
-                    dateReminderTask.text.toString(),
-                    hourReminderTask.text.toString(),
-                    recordar.isChecked
-            )
-        }
+                titleTask.text.toString(),
+                descriptionTask.text.toString(),
+                dateTask.text.toString(),
+                hourTask.text.toString(),
+                dateReminderTask.text.toString(),
+                hourReminderTask.text.toString(),
+                recordar.isChecked
+            )}
 
         dateTask.doAfterTextChanged {
+
             taskviewmodel.taskDataChanged(
-                    titleTask.text.toString(),
-                    descriptionTask.text.toString(),
-                    dateTask.text.toString(),
-                    hourTask.text.toString(),
-                    dateReminderTask.text.toString(),
-                    hourReminderTask.text.toString(),
-                    recordar.isChecked
-            )
-        }
+                titleTask.text.toString(),
+                descriptionTask.text.toString(),
+                dateTask.text.toString(),
+                hourTask.text.toString(),
+                dateReminderTask.text.toString(),
+                hourReminderTask.text.toString(),
+                recordar.isChecked
+            )}
 
         hourTask.doAfterTextChanged {
+
             taskviewmodel.taskDataChanged(
-                    titleTask.text.toString(),
-                    descriptionTask.text.toString(),
-                    dateTask.text.toString(),
-                    hourTask.text.toString(),
-                    dateReminderTask.text.toString(),
-                    hourReminderTask.text.toString(),
-                    recordar.isChecked
-            )
-        }
+                titleTask.text.toString(),
+                descriptionTask.text.toString(),
+                dateTask.text.toString(),
+                hourTask.text.toString(),
+                dateReminderTask.text.toString(),
+                hourReminderTask.text.toString(),
+                recordar.isChecked
+            )}
 
         dateReminderTask.doAfterTextChanged {
 
-            if(dateReminderTask.text.toString() != ""){
-                taskviewmodel.taskDataChanged(
-                        titleTask.text.toString(),
-                        descriptionTask.text.toString(),
-                        dateTask.text.toString(),
-                        hourTask.text.toString(),
-                        dateReminderTask.text.toString(),
-                        hourReminderTask.text.toString(),
-                        recordar.isChecked
-                )
-            } else {
-                dateReminderTask.error = null
-            }
 
-
-
-        }
+            taskviewmodel.taskDataChanged(
+                titleTask.text.toString(),
+                descriptionTask.text.toString(),
+                dateTask.text.toString(),
+                hourTask.text.toString(),
+                dateReminderTask.text.toString(),
+                hourReminderTask.text.toString(),
+                recordar.isChecked
+            )}
 
         hourReminderTask.doAfterTextChanged {
-
-            if(hourReminderTask.text.toString() != ""){
                 taskviewmodel.taskDataChanged(
-                        titleTask.text.toString(),
-                        descriptionTask.text.toString(),
-                        dateTask.text.toString(),
-                        hourTask.text.toString(),
-                        dateReminderTask.text.toString(),
-                        hourReminderTask.text.toString(),
-                        recordar.isChecked
-                )
-            } else {
-                hourReminderTask.error = null
-            }
-
-
-
-        }
-
-        recordar.setOnCheckedChangeListener { _, _ ->
-            taskviewmodel.taskDataChanged(
                     titleTask.text.toString(),
                     descriptionTask.text.toString(),
                     dateTask.text.toString(),
@@ -226,6 +201,17 @@ class CreateTaskActivity : AppCompatActivity() {
                     dateReminderTask.text.toString(),
                     hourReminderTask.text.toString(),
                     recordar.isChecked
+                )}
+
+        recordar.setOnCheckedChangeListener { _, _ ->
+            taskviewmodel.taskDataChanged(
+                titleTask.text.toString(),
+                descriptionTask.text.toString(),
+                dateTask.text.toString(),
+                hourTask.text.toString(),
+                dateReminderTask.text.toString(),
+                hourReminderTask.text.toString(),
+                recordar.isChecked
             )
 
             if (recordar.isChecked) {
@@ -242,7 +228,55 @@ class CreateTaskActivity : AppCompatActivity() {
             }
         }
 
+
+        dateTask.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+            if(hasFocus) {
+                showDatePickerDialog(v, "dateTask")
+                taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+                )
+            }
+        }
+
+        dateTask.setOnClickListener(){
+            showDatePickerDialog(it, "dateTask")
+        }
+
+        dateReminderTask.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+            if(hasFocus) {
+                showDatePickerDialog(v, "dateReminderTask")
+            }
+        }
+
+        dateReminderTask.setOnClickListener(){
+            showDatePickerDialog(it, "dateReminderTask")
+        }
+
     }
+
+
+    private fun showDatePickerDialog(v: View, dateEditText: String) {
+
+        var datePickerDialog = DatePickerDialog(
+            this,
+            this,
+            Calendar.getInstance().get(Calendar.YEAR),
+            Calendar.getInstance().get(Calendar.MONTH),
+            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+        )
+
+        datePickerDialog.datePicker.tag = dateEditText
+
+        datePickerDialog.show()
+    }
+
+
 
     private fun initializeFields(){
         titleTask = findViewById(R.id.ta_et_task_titulo)
@@ -256,7 +290,12 @@ class CreateTaskActivity : AppCompatActivity() {
         recordar = findViewById(R.id.ta_et_task_recordar)
         createActivity = findViewById(R.id.ta_bt_createTask)
         createActivity.isEnabled = false
+        dateTask.keyListener = null
+        dateReminderTask.keyListener = null
+
+
     }
+
 
     @Suppress("UNCHECKED_CAST")
     private fun fillDropdownListGroups(grupo: Group){
@@ -269,17 +308,21 @@ class CreateTaskActivity : AppCompatActivity() {
 
             var selectedGroup = grupo
             for (group in it) {
-                items.add(Group(
+                items.add(
+                    Group(
                         group.data["documentId"].toString(),
                         group.data["userId"].toString(),
                         group.data["name"].toString(),
-                        group.data["tasks"] as ArrayList<Task>))
+                        group.data["tasks"] as ArrayList<Task>
+                    )
+                )
                 if (grupo.documentId == group.data["documentId"].toString()) {
                     selectedGroup = Group(
-                            group.data["documentId"].toString(),
-                            group.data["userId"].toString(),
-                            group.data["name"].toString(),
-                            group.data["tasks"] as ArrayList<Task>)
+                        group.data["documentId"].toString(),
+                        group.data["userId"].toString(),
+                        group.data["name"].toString(),
+                        group.data["tasks"] as ArrayList<Task>
+                    )
                 }
             }
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
@@ -303,12 +346,26 @@ class CreateTaskActivity : AppCompatActivity() {
         }
 
         return Task(
-                Firebase.auth.currentUser!!.uid,
-                titleTask.text.toString(),
-                dateTask,
-                descriptionTask.text.toString(),
-                dateReminder,
-                done,
-                (activityGroups.selectedItem as Group).documentId)
+            Firebase.auth.currentUser!!.uid,
+            titleTask.text.toString(),
+            dateTask,
+            descriptionTask.text.toString(),
+            dateReminder,
+            done,
+            (activityGroups.selectedItem as Group).documentId
+        )
     }
+
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        var date:String = "$dayOfMonth/$month/$year"
+
+        if(view?.tag == "dateTask") {
+            dateTask.setText(date)
+        } else if(view?.tag == "dateReminderTask") {
+            dateReminderTask.setText(date)
+        }
+
+
+    }
+
 }
