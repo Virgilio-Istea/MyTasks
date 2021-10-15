@@ -29,7 +29,6 @@ class TasksActivity : AppCompatActivity() {
     private lateinit var firebase : FirebaseHelper
     private lateinit var recycleViewTasks: RecyclerView
 
-    private lateinit var tasks : ArrayList<Task>
     private lateinit var tasksList : ArrayList<TaskList>
 
     @Suppress("UNCHECKED_CAST")
@@ -62,9 +61,9 @@ class TasksActivity : AppCompatActivity() {
         firebase.tasksResult.observe(this, {
 
             for(document in it.documents){
-                var taskListAux = arrayListOf<Task>()
+                val taskListAux = arrayListOf<Task>()
                 for (task in document.data?.get("tasks") as ArrayList<HashMap<*,*>>){
-                    var taskAux = Task(task["title"].toString(),
+                    val taskAux = Task(task["title"].toString(),
                             (task["dateTask"] as Timestamp).toDate() ,
                             if (task["description"] != null ){
                                 task["description"].toString()}
