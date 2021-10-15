@@ -9,12 +9,10 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.Timestamp
 import com.istea.mytasks.R
 import com.istea.mytasks.adapter.GroupAdapter
 import com.istea.mytasks.db.FirebaseHelper
 import com.istea.mytasks.model.Group
-import com.istea.mytasks.model.Task
 import com.istea.mytasks.ui.create.CreateGroupActivity
 import com.istea.mytasks.ui.create.CreateTaskActivity
 import java.util.*
@@ -31,6 +29,8 @@ class MainActivity : AppCompatActivity() {
 
     private var items = ArrayList<Group>()
     private var groups = HashMap<String, Group>()
+
+    private lateinit var noGroup : Group
 
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,43 +49,20 @@ class MainActivity : AppCompatActivity() {
 
         items = ArrayList()
         groups = HashMap()
-        var createNoGroup = true
+
         var groupAux : Group
-        var tasksAux : ArrayList<Task>
-        var taskAux : Task
 
         firebase.groupsResult.observe(this, {
-            items.add(Group("",firebase.getUser(),"Todos", arrayListOf()))
-            for(group in it){
-                tasksAux = arrayListOf()
-                val tasks = group.data["tasks"]
-                for (task in tasks as ArrayList<Map<String,Any>>){
-                    taskAux = Task(task["userId"].toString(),
-                            task["title"].toString(),
-                            (task["dateTask"] as Timestamp).toDate(),
-                            task["descriptionTask"].toString(),
-                            if (task["dateReminder"] == null){
-                                null
-                            }
-                            else{
-                                (task["dateReminder"] as Timestamp).toDate()
-                                },
-                            task["status"] as Boolean,
-                            task["groupId"].toString())
-                    tasksAux.add(taskAux)
+            items.add(Group("","Todos"))
+            for(group in it.data?.get("groups") as ArrayList<HashMap<String, String>>){
+                for (value in group){
+                    groupAux = Group(value.value,value.key)
+                    items.add(groupAux)
+                    groups[groupAux.documentId] = groupAux
+                    if (groupAux.name == "Sin Grupo"){
+                        noGroup = groupAux
+                    }
                 }
-                groupAux = Group(group.id,firebase.getUser(),group.data["name"].toString(), tasksAux)
-                items.add(groupAux)
-                groups[groupAux.documentId] = groupAux
-                if (group.data["name"].toString() == "Sin Grupo"){
-                    createNoGroup = false
-                }
-            }
-
-            if (createNoGroup) {
-                firebase.createNoGroup(firebase.getUser())
-                finish()
-                startActivity(intent)
             }
 
             recycleViewReport.adapter = GroupAdapter(items) { selectedButton ->
@@ -105,7 +82,7 @@ class MainActivity : AppCompatActivity() {
 
         createActivity.setOnClickListener {
             val intent = Intent(this, CreateTaskActivity::class.java)
-            intent.putExtra("group", Group("","","", arrayListOf()))
+            intent.putExtra("group", Group("",""))
             startActivity(intent)
         }
 
@@ -123,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        firebase.getGroupsByUser(firebase.getUser())
+        firebase.getGroupsByUser()
         items = ArrayList()
         groups = HashMap()
     }
@@ -141,7 +118,8 @@ class MainActivity : AppCompatActivity() {
                     }
                     R.id.action_delete -> {
                         //TODO: Implement submenu to delete all tasks in group or not
-                        firebase.deleteGroup(group, false)
+
+                        firebase.deleteGroup(group, false, noGroup)
                         finish()
                         startActivity(intent)
                         true
