@@ -44,4 +44,23 @@
     <string name="hora_actividad_recordatorio_invalido">Hora de recordatorio invalido</string>
     <string name="fecha_recordatorio_superior_fecha_actividad">La fecha de actividad de recordatorio es superior a la fecha de recordatorio</string>
     <string name="taskStatus">%1$s (%2$d)</string>
+    <string name="calendarioImagen">Ir a Calendario</string>
+    <string name="tituloCalendario">Calendario</string>
+    <array name="materia_calendar_months_array">
+        <item>Enero</item>
+        <item>Febero</item>
+        <item>Marzo</item>
+        <item>Abril</item>
+        <item>Mayo</item>
+        <item>Junio</item>
+        <item>Julio</item>
+        <item>Agosto</item>
+        <item>Septiembre</item>
+        <item>Octubre</item>
+        <item>Noviembre</item>
+        <item>Diciembre</item>
+    </array>
+
+    <string name="material_calendar_today_button">Hoy</string>
+    <string name="material_calendar_negative_button">Cancelar</string>
 </resources>

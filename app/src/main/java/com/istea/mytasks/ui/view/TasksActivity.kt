@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +29,7 @@ class TasksActivity : AppCompatActivity() {
     private lateinit var title: TextView
     private lateinit var firebase : FirebaseHelper
     private lateinit var recycleViewTasks: RecyclerView
+    private lateinit var calendarAcitivtyButton: ImageView
 
     private lateinit var tasksList : ArrayList<TaskList>
 
@@ -44,6 +46,7 @@ class TasksActivity : AppCompatActivity() {
         createActivity = findViewById(R.id.create_activity)
         title = findViewById(R.id.group_title)
         recycleViewTasks = findViewById(R.id.recyclerViewTasks)
+        calendarAcitivtyButton = findViewById(R.id.calendar_button)
 
         recycleViewTasks.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL,false)
 
@@ -108,6 +111,14 @@ class TasksActivity : AppCompatActivity() {
         createActivity.setOnClickListener {
             val intent = Intent(this, CreateTaskActivity::class.java)
             intent.putExtra("group", group)
+            startActivity(intent)
+        }
+
+        calendarAcitivtyButton.setOnClickListener {
+            val intent = Intent(this, CalendarActivity::class.java)
+
+            intent.putExtra("taskList", tasksList)
+
             startActivity(intent)
         }
     }
