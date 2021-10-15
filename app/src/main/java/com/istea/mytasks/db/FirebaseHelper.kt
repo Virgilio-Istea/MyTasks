@@ -94,12 +94,12 @@ class FirebaseHelper {
                 .collection("groups").document()
         val userDB = db.collection("users").document(getUser())
         group.documentId = newGroup.id
+        userDB.update("groups", FieldValue.arrayUnion(mapOf(group.name to newGroup.id)))
+                .addOnSuccessListener {
+                    getGroupsByUser()
+                }
         newGroup.set(group)
             .addOnSuccessListener {
-                userDB.update("groups", FieldValue.arrayUnion(mapOf(group.name to newGroup.id)))
-                        .addOnSuccessListener {
-                            getGroupsByUser()
-                        }
                 newGroup.collection(Group.TODO).document("0")
                         .set(TaskList(Group.TODO, arrayListOf()))
                 newGroup.collection(Group.DONE).document("0")
@@ -221,6 +221,8 @@ class FirebaseHelper {
         val taskDB = db.collection("users").document(getUser())
                 .collection("groups").document(group)
                 .collection(status).document("0")
+
+        //TODO check document size and create a new one in case it is full
 
         taskDB.update("tasks",FieldValue.arrayUnion(task))
     }
