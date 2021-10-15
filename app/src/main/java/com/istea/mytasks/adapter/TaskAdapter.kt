@@ -9,6 +9,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.istea.mytasks.R
 import com.istea.mytasks.model.ExpandableTasks
+import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.Task
 
 class TaskAdapter (private val context: Context, private val dataSet: ArrayList<ExpandableTasks>, val onButtonClickListener:(selectedItem: ListenerType) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>()
@@ -27,9 +28,9 @@ class TaskAdapter (private val context: Context, private val dataSet: ArrayList<
     }
 
     sealed class ListenerType {
-        class SelectTaskListener(val task: Task): ListenerType()
-        class ToggleTaskCompletionListener(val task: Task): ListenerType()
-        class PopupMenuListener(val task: Task, val view: View): ListenerType()
+        class SelectTaskListener(val task: Task, val status: String): ListenerType()
+        class ToggleTaskCompletionListener(val task: Task, val status: String): ListenerType()
+        class PopupMenuListener(val task: Task, val view: View, val status: String): ListenerType()
     }
 
     override fun getItemCount(): Int {
@@ -43,12 +44,12 @@ class TaskAdapter (private val context: Context, private val dataSet: ArrayList<
 
         when(row.type){
             ExpandableTasks.PARENT -> {
-                when (row.parent.done) {
-                    true -> (holder as ParentViewHolder).completed.text = context.getString(R.string.taskStatus, "Listo", row.parent.tasks.count())
-                    false -> (holder as ParentViewHolder).completed.text = context.getString(R.string.taskStatus,"Para Hacer", row.parent.tasks.count())
+                when (row.parent.status.toString()) {
+                    Group.DONE -> (holder as ParentViewHolder).completed.text = context.getString(R.string.taskStatus, "Listo", row.parent.tasks.count())
+                    Group.TODO -> (holder as ParentViewHolder).completed.text = context.getString(R.string.taskStatus,"Para Hacer", row.parent.tasks.count())
                 }
 
-                holder.closeImage.setOnClickListener {
+                (holder as ParentViewHolder).closeImage.setOnClickListener {
                     toogleVisibility(row,holder,position)
                 }
 
@@ -66,7 +67,7 @@ class TaskAdapter (private val context: Context, private val dataSet: ArrayList<
 
                 (holder as ChildViewHolder).taskName.text = row.child.title
 
-                if (row.child.status) {
+                if (row.status.toString() == Group.DONE) {
                     holder.complete.setImageResource(R.drawable.baseline_radio_button_checked_24)
                 }
                 else {
@@ -74,15 +75,15 @@ class TaskAdapter (private val context: Context, private val dataSet: ArrayList<
                 }
 
                 holder.taskName.setOnClickListener {
-                    onButtonClickListener(ListenerType.SelectTaskListener(row.child))
+                    onButtonClickListener(ListenerType.SelectTaskListener(row.child, row.status))
                 }
 
                 holder.complete.setOnClickListener{
-                    onButtonClickListener(ListenerType.ToggleTaskCompletionListener(row.child))
+                    onButtonClickListener(ListenerType.ToggleTaskCompletionListener(row.child, row.status))
                 }
 
                 holder.popupMenu.setOnClickListener {
-                    onButtonClickListener(ListenerType.PopupMenuListener(row.child, it))
+                    onButtonClickListener(ListenerType.PopupMenuListener(row.child, it, row.status))
                 }
             }
         }
@@ -110,7 +111,7 @@ class TaskAdapter (private val context: Context, private val dataSet: ArrayList<
         when (row.type) {
             ExpandableTasks.PARENT -> {
                 for(child in row.parent.tasks){
-                    dataSet.add(++nextPosition, ExpandableTasks(ExpandableTasks.CHILD, child))
+                    dataSet.add(++nextPosition, ExpandableTasks(ExpandableTasks.CHILD, child, row.status))
                 }
                 notifyDataSetChanged()
             }

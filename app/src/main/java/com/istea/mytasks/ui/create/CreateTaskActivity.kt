@@ -3,25 +3,22 @@ package com.istea.mytasks.ui.create
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.istea.mytasks.R
 import com.istea.mytasks.db.FirebaseHelper
 import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.Task
-import com.istea.mytasks.model.TaskState
 import com.istea.mytasks.model.TaskViewModelFactory
 import com.istea.mytasks.ui.view.MainActivity
 import com.istea.mytasks.ui.viewmodel.TaskViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
@@ -41,7 +38,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private lateinit var firebase : FirebaseHelper
 
-    private lateinit var grupo : Group
+    private lateinit var grupoId : String
+    private lateinit var status : String
     private lateinit var task : Task
 
 
@@ -87,16 +85,18 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         val create = intent.getBooleanExtra("create", true)
 
-        grupo = Group("", "", "", arrayListOf())
-        task = Task("", "", Calendar.getInstance().time, "", Calendar.getInstance().time, false, "")
+        grupoId = ""
+        task = Task("", Calendar.getInstance().time, "", Calendar.getInstance().time, "")
 
         initializeFields()
 
         if (create){
-            grupo = intent.getSerializableExtra("group") as Group
+            grupoId = (intent.getSerializableExtra("group") as Group).documentId
         }
         if (!create){
             task = intent.getSerializableExtra("task") as Task
+            grupoId = intent.getStringExtra("group").toString()
+            status = intent.getStringExtra("status").toString()
 
             val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val hourFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -112,22 +112,23 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                     recordar.isChecked = true
                 }
 
-                grupo = Group(task.groupId, "", "", arrayListOf())
                 createActivity.text = getString(R.string.modificar_actividad)
             }
         }
 
-        fillDropdownListGroups(grupo)
+        fillDropdownListGroups(grupoId)
 
         createActivity.setOnClickListener{
             if (create){
                 firebase.createTask(
-                    createTaskObject(false),
-                    (activityGroups.selectedItem as Group).documentId
+                    createTaskObject(),
+                    (activityGroups.selectedItem as Group).documentId, Group.TODO
                 )
             }
             else {
-                firebase.modifyTask(createTaskObject(task.status), task)
+                firebase.modifyTask(createTaskObject(),
+                        (activityGroups.selectedItem as Group).documentId,
+                        status, task, task.groupId, status)
             }
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -230,32 +231,32 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         }
 
 
-        dateTask.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+        dateTask.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if(hasFocus) {
-                showDatePickerDialog(v, "dateTask")
+                showDatePickerDialog("dateTask")
             }
         }
 
-        dateTask.setOnClickListener(){
-            showDatePickerDialog(it, "dateTask")
+        dateTask.setOnClickListener {
+            showDatePickerDialog("dateTask")
         }
 
-        dateReminderTask.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+        dateReminderTask.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if(hasFocus) {
-                showDatePickerDialog(v, "dateReminderTask")
+                showDatePickerDialog("dateReminderTask")
             }
         }
 
-        dateReminderTask.setOnClickListener(){
-            showDatePickerDialog(it, "dateReminderTask")
+        dateReminderTask.setOnClickListener {
+            showDatePickerDialog("dateReminderTask")
         }
 
     }
 
 
-    private fun showDatePickerDialog(v: View, dateEditText: String) {
+    private fun showDatePickerDialog(dateEditText: String) {
 
-        var datePickerDialog = DatePickerDialog(
+        val datePickerDialog = DatePickerDialog(
             this,
             this,
             Calendar.getInstance().get(Calendar.YEAR),
@@ -288,40 +289,37 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun setTodayDate(): String {
-        var calendar = Calendar.getInstance();
+        val calendar = Calendar.getInstance()
 
-        var dateFormat = SimpleDateFormat("dd/MM/yyyy");
-        var date = dateFormat.format(calendar.getTime());
-        return date
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+        return dateFormat.format(calendar.time)
     }
 
 
     @Suppress("UNCHECKED_CAST")
-    private fun fillDropdownListGroups(grupo: Group){
+    private fun fillDropdownListGroups(grupo: String){
 
-        firebase.getGroupsByUser(firebase.getUser())
+        firebase.getGroupsByUser()
 
         val items = ArrayList<Group>()
 
         firebase.groupsResult.observe(this, {
 
-            var selectedGroup = grupo
-            for (group in it) {
-                items.add(
-                    Group(
-                        group.data["documentId"].toString(),
-                        group.data["userId"].toString(),
-                        group.data["name"].toString(),
-                        group.data["tasks"] as ArrayList<Task>
+            var selectedGroup = Group("","")
+            for (group in it.data?.get("groups") as ArrayList<HashMap<String,String>>) {
+                for (value in group) {
+                    items.add(
+                            Group(
+                                    value.value,
+                                    value.key
+                            )
                     )
-                )
-                if (grupo.documentId == group.data["documentId"].toString()) {
-                    selectedGroup = Group(
-                        group.data["documentId"].toString(),
-                        group.data["userId"].toString(),
-                        group.data["name"].toString(),
-                        group.data["tasks"] as ArrayList<Task>
-                    )
+                    if (grupo == value.value) {
+                        selectedGroup = Group(
+                                value.value,
+                                value.key
+                        )
+                    }
                 }
             }
             val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
@@ -333,7 +331,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         })
     }
 
-    private fun createTaskObject(done: Boolean) : Task{
+    private fun createTaskObject() : Task{
         val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
         val dateTask: Date = formatter.parse("${dateTask.text} ${hourTask.text}")!!
@@ -345,19 +343,17 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         }
 
         return Task(
-            Firebase.auth.currentUser!!.uid,
             titleTask.text.toString(),
             dateTask,
             descriptionTask.text.toString(),
             dateReminder,
-            done,
-            (activityGroups.selectedItem as Group).documentId
+            (activityGroups.selectedItem as Group).toId()
         )
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        var correctMonth = month + 1
-        var date:String = "$dayOfMonth/$correctMonth/$year"
+        val correctMonth = month + 1
+        val date = "$dayOfMonth/$correctMonth/$year"
 
         if(view?.tag == "dateTask") {
             dateTask.setText(date)

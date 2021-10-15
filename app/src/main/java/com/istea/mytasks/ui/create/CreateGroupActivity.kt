@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.istea.mytasks.R
 import com.istea.mytasks.db.FirebaseHelper
 import com.istea.mytasks.model.Group
@@ -30,7 +28,7 @@ class CreateGroupActivity : AppCompatActivity() {
 
         val create = intent.getBooleanExtra("create", true)
 
-        grupo = Group("","","", arrayListOf())
+        grupo = Group("","")
 
         if (!create){
             grupo = intent.getSerializableExtra("group") as Group
@@ -44,9 +42,7 @@ class CreateGroupActivity : AppCompatActivity() {
         createGroup.setOnClickListener {
             if (create){
             val group = Group("",
-                    Firebase.auth.currentUser!!.uid,
-                    titleGroup.text.toString(),
-                    arrayListOf())
+                    titleGroup.text.toString())
             firebase.createGroup(group)
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -54,9 +50,8 @@ class CreateGroupActivity : AppCompatActivity() {
             else{
                 firebase.modifyGroup(
                         Group(grupo.documentId,
-                              grupo.userId,
-                              titleGroup.text.toString(),
-                              grupo.tasks))
+                              titleGroup.text.toString()),
+                        grupo)
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             }

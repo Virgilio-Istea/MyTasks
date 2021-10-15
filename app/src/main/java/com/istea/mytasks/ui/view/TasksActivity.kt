@@ -10,6 +10,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.Timestamp
 import com.istea.mytasks.R
 import com.istea.mytasks.adapter.TaskAdapter
 import com.istea.mytasks.db.FirebaseHelper
@@ -30,6 +31,9 @@ class TasksActivity : AppCompatActivity() {
     private lateinit var recycleViewTasks: RecyclerView
     private lateinit var calendarAcitivtyButton: ImageView
 
+    private lateinit var tasks : ArrayList<Task>
+    private lateinit var tasksList : ArrayList<TaskList>
+
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,37 +53,61 @@ class TasksActivity : AppCompatActivity() {
 
         title.text = group.name
 
-        val tasks: ArrayList<Task> = group.tasks
-
         if (group.name == "Todos"){
-            group.tasks = arrayListOf()
-            for (groupAux in groups){
-                for (task in groupAux.value.tasks){
-                    tasks.add(task)
-                }
-            }
+            firebase.getTasks()
+        }
+        else{
+            firebase.getTasksByGroup(group)
         }
 
-        val taskList = toExpandableList(tasks)
+        tasksList = arrayListOf()
 
-        recycleViewTasks.adapter = TaskAdapter(this, taskList){selectedItem ->
-            when(selectedItem){
-                is TaskAdapter.ListenerType.SelectTaskListener -> {
-                    val intent = Intent(this@TasksActivity, CreateTaskActivity::class.java)
-                    intent.putExtra("task", selectedItem.task)
-                    intent.putExtra("create", false)
-                    startActivity(intent)
+        firebase.tasksResult.observe(this, {
+
+            for(document in it.documents){
+                var taskListAux = arrayListOf<Task>()
+                for (task in document.data?.get("tasks") as ArrayList<HashMap<*,*>>){
+                    var taskAux = Task(task["title"].toString(),
+                            (task["dateTask"] as Timestamp).toDate() ,
+                            if (task["description"] != null ){
+                                task["description"].toString()}
+                            else {""},
+                            if (task["dateReminder"] != null){
+                                    (task["dateReminder"] as Timestamp).toDate()
+                            } else {null},
+                            task["groupId"].toString()
+                            )
+                    taskListAux.add(taskAux)
                 }
-                is TaskAdapter.ListenerType.PopupMenuListener -> {
-                    showPopup(selectedItem.view, selectedItem.task, group,groups)
-                }
-                is TaskAdapter.ListenerType.ToggleTaskCompletionListener -> {
-                    firebase.toggleTaskCompletion(selectedItem.task)
-                    selectedItem.task.status = !selectedItem.task.status
-                    refreshActivity(group,groups)
+                tasksList.add(TaskList(document.data?.get("status").toString(),
+                        taskListAux))
+            }
+
+            val taskExpandableList = toExpandableList(tasksList)
+
+            recycleViewTasks.adapter = TaskAdapter(this, taskExpandableList){selectedItem ->
+                when(selectedItem){
+                    is TaskAdapter.ListenerType.SelectTaskListener -> {
+                        val intent = Intent(this@TasksActivity, CreateTaskActivity::class.java)
+                        intent.putExtra("task", selectedItem.task)
+                        intent.putExtra("status", selectedItem.status)
+                        intent.putExtra("group", selectedItem.task.groupId)
+                        intent.putExtra("create", false)
+                        startActivity(intent)
+                    }
+                    is TaskAdapter.ListenerType.PopupMenuListener -> {
+                        showPopup(selectedItem.view, selectedItem.task, group, groups, selectedItem.status)
+                    }
+                    is TaskAdapter.ListenerType.ToggleTaskCompletionListener -> {
+                        var status = Group.TODO
+                        if (selectedItem.status == Group.TODO){status = Group.DONE}
+                        firebase.toggleTaskCompletion(selectedItem.task, status,selectedItem.status)
+
+                        refreshActivity(group,groups)
+                    }
                 }
             }
-        }
+        })
 
         createActivity.setOnClickListener {
             val intent = Intent(this, CreateTaskActivity::class.java)
@@ -95,29 +123,29 @@ class TasksActivity : AppCompatActivity() {
         }
     }
 
-    private fun toExpandableList(tasks : ArrayList<Task>) : ArrayList<ExpandableTasks>{
+    private fun toExpandableList(taskList : ArrayList<TaskList>) : ArrayList<ExpandableTasks>{
         val expandableModel = arrayListOf<ExpandableTasks>()
         val taskListUndone = arrayListOf<Task>()
         val taskListDone = arrayListOf<Task>()
 
-        for (task in tasks){
-            when (task.status){
-                false -> taskListUndone.add(task)
-                true -> taskListDone.add(task)
+        for (tasks in taskList){
+            when (tasks.status){
+                Group.TODO -> taskListUndone.addAll(tasks.tasks)
+                Group.DONE -> taskListDone.addAll(tasks.tasks)
             }
         }
 
         expandableModel.add(
-                ExpandableTasks(ExpandableTasks.PARENT, TaskList.Completed(false,taskListUndone))
+                ExpandableTasks(ExpandableTasks.PARENT, TaskList(Group.TODO,taskListUndone))
         )
         expandableModel.add(
-                ExpandableTasks(ExpandableTasks.PARENT, TaskList.Completed(true,taskListDone))
+                ExpandableTasks(ExpandableTasks.PARENT, TaskList(Group.DONE,taskListDone))
         )
 
         return expandableModel
     }
 
-    private fun showPopup(v: View, task: Task, group : Group, groups : HashMap<String, Group>) {
+    private fun showPopup(v: View, task: Task, group : Group, groups : HashMap<String, Group>, status : String) {
         PopupMenu(this, v).apply {
             setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -129,8 +157,8 @@ class TasksActivity : AppCompatActivity() {
                         true
                     }
                     R.id.action_delete -> {
-                        firebase.deleteTask(task, task.groupId)
-                        group.tasks.remove(task)
+                        firebase.deleteTask(task, group.documentId, status)
+
                         groups[group.documentId] = group
                         refreshActivity(group,groups)
                         true
