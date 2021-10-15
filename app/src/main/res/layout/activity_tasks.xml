@@ -16,12 +16,20 @@
 
         <TextView
             android:id="@+id/group_title"
-            android:layout_width="0dp"
+            android:layout_width="247dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/defaultGroup"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+
+        <ImageView
+            android:id="@+id/calendar_button"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/calendarioImagen"
+            app:srcCompat="@mipmap/calendar_24" />
 
     </LinearLayout>
 
