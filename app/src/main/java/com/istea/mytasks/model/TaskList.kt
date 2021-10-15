@@ -1,6 +1,8 @@
 package com.istea.mytasks.model
 
-data class TaskList (
+import java.io.Serializable
+
+data class TaskList(
         val status: String,
         val tasks: ArrayList<Task>
-    )
+    ) : Serializable

@@ -117,7 +117,8 @@ class TasksActivity : AppCompatActivity() {
 
         calendarAcitivtyButton.setOnClickListener {
             val intent = Intent(this, CalendarActivity::class.java)
-            intent.putExtra("group", group)
+
+            intent.putExtra("taskList", tasksList)
 
             startActivity(intent)
         }

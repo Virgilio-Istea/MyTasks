@@ -8,6 +8,7 @@ import com.istea.mytasks.R
 import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.MyEventDay
 import com.istea.mytasks.model.Task
+import com.istea.mytasks.model.TaskList
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -15,7 +16,7 @@ import kotlin.collections.ArrayList
 class CalendarActivity : AppCompatActivity() {
 
     private lateinit var calendarView : com.applandeo.materialcalendarview.CalendarView
-    private lateinit var tasks: ArrayList<Task>
+    private lateinit var arrayTasksList: ArrayList<TaskList>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,10 +26,10 @@ class CalendarActivity : AppCompatActivity() {
         setTodayDateToCalendar()
 
         val intent = intent
-        var grupo = intent.getSerializableExtra("group") as Group
-        tasks = grupo.tasks
+        var taskList = intent.getSerializableExtra("taskList") as ArrayList<TaskList>
+        arrayTasksList = taskList
 
-        var events = convertToListOfEvents(tasks)
+        var events = convertToListOfEvents(arrayTasksList)
 
         calendarView.setEvents(events as List<EventDay>?)
 
@@ -48,7 +49,7 @@ class CalendarActivity : AppCompatActivity() {
             }
 
             if(eventsInDay.count() > 0) {
-                //TODO: Abrir vista de actividades de ese dia
+                //TODO: Abrir vista de actividades de ese dia (Proximo sprint)
             }
 
         }
@@ -60,11 +61,13 @@ class CalendarActivity : AppCompatActivity() {
 
         var listOfTask = ArrayList<Task>()
 
-        for (task in tasks){
-            if(task.dateTask in initDay..lastDay) {
-                listOfTask.add(task)
+        for (taskList in arrayTasksList) {
+                for (task in taskList.tasks){
+                    if(task.dateTask in initDay..lastDay) {
+                        listOfTask.add(task)
+                    }
+                }
             }
-        }
 
         return  listOfTask
     }
@@ -82,10 +85,11 @@ class CalendarActivity : AppCompatActivity() {
         return MyEventDay(calendar, R.drawable.ic_arrow_down, task.title, task.descriptionTask)
     }
 
-    private fun convertToListOfEvents(tasks: ArrayList<Task>): ArrayList<MyEventDay>{
+    private fun convertToListOfEvents(tasksLists: ArrayList<TaskList>): ArrayList<MyEventDay>{
 
         var listOfEventDays = ArrayList<MyEventDay>()
-        for (task in tasks) {
+        for (taskList in tasksLists) {
+            for (task in taskList.tasks)
             listOfEventDays.add(createEvent(task))
         }
 
