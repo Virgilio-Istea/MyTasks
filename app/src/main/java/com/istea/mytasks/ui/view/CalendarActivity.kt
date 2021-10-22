@@ -1,9 +1,11 @@
 package com.istea.mytasks.ui.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.applandeo.materialcalendarview.EventDay
+import com.google.android.gms.tasks.Tasks
 import com.istea.mytasks.R
 import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.MyEventDay
@@ -49,7 +51,10 @@ class CalendarActivity : AppCompatActivity() {
             }
 
             if(eventsInDay.count() > 0) {
-                //TODO: Abrir vista de actividades de ese dia (Proximo sprint)
+                var tasks = convertToListOfTasks(arrayTasksList)
+                var intent = Intent(this, CalendarTasksActivity::class.java)
+                intent.putExtra("tasks", tasks)
+                startActivity(intent)
             }
 
         }
@@ -94,5 +99,15 @@ class CalendarActivity : AppCompatActivity() {
         }
 
         return listOfEventDays
+    }
+
+    private fun convertToListOfTasks(tasksLists: ArrayList<TaskList>): ArrayList<Task> {
+        var listOfTasks = ArrayList<Task>()
+        for (taskList in tasksLists) {
+            for (task in taskList.tasks)
+                listOfTasks.add(task)
+        }
+
+        return listOfTasks
     }
 }

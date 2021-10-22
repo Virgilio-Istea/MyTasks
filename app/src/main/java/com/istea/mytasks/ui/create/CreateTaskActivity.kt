@@ -1,11 +1,20 @@
 package com.istea.mytasks.ui.create
 
+import android.R.attr.button
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.media.MediaRecorder
 import android.os.Bundle
+import android.os.Environment
+import android.os.ParcelFileDescriptor
+import android.view.MotionEvent
 import android.view.View.OnFocusChangeListener
+import android.view.View.OnTouchListener
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.istea.mytasks.R
@@ -15,10 +24,11 @@ import com.istea.mytasks.model.Task
 import com.istea.mytasks.model.TaskViewModelFactory
 import com.istea.mytasks.ui.view.MainActivity
 import com.istea.mytasks.ui.viewmodel.TaskViewModel
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
@@ -35,6 +45,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private lateinit var recordar : Switch
     private lateinit var createActivity : Button
+    private lateinit var guardarVoz : Button
 
     private lateinit var firebase : FirebaseHelper
 
@@ -42,7 +53,9 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private lateinit var status : String
     private lateinit var task : Task
 
+    private var mRecorder = MediaRecorder()
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_task)
@@ -89,6 +102,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         task = Task("", Calendar.getInstance().time, "", Calendar.getInstance().time, "")
 
         initializeFields()
+        giveMicPermissions()
 
         if (create){
             grupoId = (intent.getSerializableExtra("group") as Group).documentId
@@ -121,8 +135,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         createActivity.setOnClickListener{
             if (create){
                 firebase.createTask(
-                    createTaskObject(),
-                    (activityGroups.selectedItem as Group).documentId, Group.TODO
+                        createTaskObject(),
+                        (activityGroups.selectedItem as Group).documentId, Group.TODO
                 )
             }
             else {
@@ -134,69 +148,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             startActivity(intent)
         }
 
-
-
         titleTask.doAfterTextChanged {
             taskviewmodel.taskDataChanged(
-                titleTask.text.toString(),
-                descriptionTask.text.toString(),
-                dateTask.text.toString(),
-                hourTask.text.toString(),
-                dateReminderTask.text.toString(),
-                hourReminderTask.text.toString(),
-                recordar.isChecked
-            )}
-
-        descriptionTask.doAfterTextChanged {
-            taskviewmodel.taskDataChanged(
-                titleTask.text.toString(),
-                descriptionTask.text.toString(),
-                dateTask.text.toString(),
-                hourTask.text.toString(),
-                dateReminderTask.text.toString(),
-                hourReminderTask.text.toString(),
-                recordar.isChecked
-            )}
-
-        dateTask.doAfterTextChanged {
-
-            taskviewmodel.taskDataChanged(
-                titleTask.text.toString(),
-                descriptionTask.text.toString(),
-                dateTask.text.toString(),
-                hourTask.text.toString(),
-                dateReminderTask.text.toString(),
-                hourReminderTask.text.toString(),
-                recordar.isChecked
-            )}
-
-        hourTask.doAfterTextChanged {
-
-            taskviewmodel.taskDataChanged(
-                titleTask.text.toString(),
-                descriptionTask.text.toString(),
-                dateTask.text.toString(),
-                hourTask.text.toString(),
-                dateReminderTask.text.toString(),
-                hourReminderTask.text.toString(),
-                recordar.isChecked
-            )}
-
-        dateReminderTask.doAfterTextChanged {
-
-
-            taskviewmodel.taskDataChanged(
-                titleTask.text.toString(),
-                descriptionTask.text.toString(),
-                dateTask.text.toString(),
-                hourTask.text.toString(),
-                dateReminderTask.text.toString(),
-                hourReminderTask.text.toString(),
-                recordar.isChecked
-            )}
-
-        hourReminderTask.doAfterTextChanged {
-                taskviewmodel.taskDataChanged(
                     titleTask.text.toString(),
                     descriptionTask.text.toString(),
                     dateTask.text.toString(),
@@ -204,17 +157,77 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                     dateReminderTask.text.toString(),
                     hourReminderTask.text.toString(),
                     recordar.isChecked
+            )}
+
+        descriptionTask.doAfterTextChanged {
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )}
+
+        dateTask.doAfterTextChanged {
+
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )}
+
+        hourTask.doAfterTextChanged {
+
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )}
+
+        dateReminderTask.doAfterTextChanged {
+
+            taskviewmodel.taskDataChanged(
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
+            )}
+
+        hourReminderTask.doAfterTextChanged {
+
+                taskviewmodel.taskDataChanged(
+                        titleTask.text.toString(),
+                        descriptionTask.text.toString(),
+                        dateTask.text.toString(),
+                        hourTask.text.toString(),
+                        dateReminderTask.text.toString(),
+                        hourReminderTask.text.toString(),
+                        recordar.isChecked
                 )}
 
         recordar.setOnCheckedChangeListener { _, _ ->
+
             taskviewmodel.taskDataChanged(
-                titleTask.text.toString(),
-                descriptionTask.text.toString(),
-                dateTask.text.toString(),
-                hourTask.text.toString(),
-                dateReminderTask.text.toString(),
-                hourReminderTask.text.toString(),
-                recordar.isChecked
+                    titleTask.text.toString(),
+                    descriptionTask.text.toString(),
+                    dateTask.text.toString(),
+                    hourTask.text.toString(),
+                    dateReminderTask.text.toString(),
+                    hourReminderTask.text.toString(),
+                    recordar.isChecked
             )
 
             if (recordar.isChecked) {
@@ -229,7 +242,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 hourReminderTask.setText("")
             }
         }
-
 
         dateTask.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if(hasFocus) {
@@ -251,17 +263,86 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             showDatePickerDialog("dateReminderTask")
         }
 
+        guardarVoz.setOnTouchListener(OnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    startRecording()
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    stopRecording()
+                }
+            }
+            false
+        })
+
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            guardarVoz.isEnabled = true
+    }
+
+    private fun giveMicPermissions() {
+        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECORD_AUDIO), 111)
+        } else {
+            guardarVoz.isEnabled = true
+        }
+
+        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),112)
+        }
+
+    }
+
+    private fun startRecording() {
+        // Byte array for audio record
+        val byteArrayOutputStream = ByteArrayOutputStream()
+
+        val descriptors = ParcelFileDescriptor.createPipe()
+        val parcelRead = ParcelFileDescriptor(descriptors[0])
+        val parcelWrite = ParcelFileDescriptor(descriptors[1])
+
+        val inputStream: InputStream = ParcelFileDescriptor.AutoCloseInputStream(parcelRead)
+
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+        mRecorder.setOutputFile(parcelWrite.fileDescriptor)
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        mRecorder.prepare()
+
+        mRecorder.start()
+
+        var read: Int
+        val data = ByteArray(16384)
+
+        while (inputStream.read(data, 0, data.size).also { read = it } != -1) {
+            byteArrayOutputStream.write(data, 0, read)
+        }
+
+        byteArrayOutputStream.flush()
+
+        byteArrayOutputStream.toByteArray()
+    }
+
+    private fun stopRecording() {
+        mRecorder.stop()
+        mRecorder.reset()
+        mRecorder.release()
+
     }
 
 
     private fun showDatePickerDialog(dateEditText: String) {
 
         val datePickerDialog = DatePickerDialog(
-            this,
-            this,
-            Calendar.getInstance().get(Calendar.YEAR),
-            Calendar.getInstance().get(Calendar.MONTH),
-            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                this,
+                this,
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         )
 
         datePickerDialog.datePicker.tag = dateEditText
@@ -286,6 +367,9 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         dateTask.keyListener = null
         dateReminderTask.keyListener = null
         dateTask.setText(setTodayDate())
+
+        guardarVoz = findViewById(R.id.ta_btn_task_descripcion_audio)
+        guardarVoz.isEnabled = false;
     }
 
     private fun setTodayDate(): String {
@@ -305,8 +389,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         firebase.groupsResult.observe(this, {
 
-            var selectedGroup = Group("","")
-            for (group in it.data?.get("groups") as ArrayList<HashMap<String,String>>) {
+            var selectedGroup = Group("", "")
+            for (group in it.data?.get("groups") as ArrayList<HashMap<String, String>>) {
                 for (value in group) {
                     items.add(
                             Group(
@@ -343,11 +427,11 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         }
 
         return Task(
-            titleTask.text.toString(),
-            dateTask,
-            descriptionTask.text.toString(),
-            dateReminder,
-            (activityGroups.selectedItem as Group).toId()
+                titleTask.text.toString(),
+                dateTask,
+                descriptionTask.text.toString(),
+                dateReminder,
+                (activityGroups.selectedItem as Group).toId()
         )
     }
 

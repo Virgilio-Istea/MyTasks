@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.istea.mytasks">
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyTasks">
-        <activity android:name=".ui.view.CalendarActivity"></activity>
+        <activity android:name=".ui.view.CalendarTasksActivity"></activity>
+        <activity android:name=".ui.view.CalendarActivity" />
         <activity android:name=".ui.create.CreateTaskActivity" />
         <activity android:name=".ui.create.CreateGroupActivity" />
         <activity android:name=".ui.view.TasksActivity" />
