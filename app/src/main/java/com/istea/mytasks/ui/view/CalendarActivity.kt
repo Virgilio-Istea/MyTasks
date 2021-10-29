@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.applandeo.materialcalendarview.EventDay
-import com.google.android.gms.tasks.Tasks
 import com.istea.mytasks.R
-import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.MyEventDay
 import com.istea.mytasks.model.Task
 import com.istea.mytasks.model.TaskList
@@ -44,16 +42,17 @@ class CalendarActivity : AppCompatActivity() {
             val initDay = Date(year - 1900, month, day, 0,0,0)
             val lastDay = Date(year - 1900, month, day, 23,59,59)
 
-            var eventsInDay = returnTasksBetweenDates(initDay, lastDay)
+            var tasksInDay = returnTasksBetweenDates(initDay, lastDay)
+            tasksInDay.sortBy { it.dateTask }
 
-            if(eventsInDay.count() == 0) {
+
+            if(tasksInDay.count() == 0) {
                 Toast.makeText(this,"No hay eventos en este dia", Toast.LENGTH_SHORT).show()
             }
 
-            if(eventsInDay.count() > 0) {
-                var tasks = convertToListOfTasks(arrayTasksList)
+            if(tasksInDay.count() > 0) {
                 var intent = Intent(this, CalendarTasksActivity::class.java)
-                intent.putExtra("tasks", tasks)
+                intent.putExtra("tasks", tasksInDay)
                 startActivity(intent)
             }
 
@@ -101,13 +100,4 @@ class CalendarActivity : AppCompatActivity() {
         return listOfEventDays
     }
 
-    private fun convertToListOfTasks(tasksLists: ArrayList<TaskList>): ArrayList<Task> {
-        var listOfTasks = ArrayList<Task>()
-        for (taskList in tasksLists) {
-            for (task in taskList.tasks)
-                listOfTasks.add(task)
-        }
-
-        return listOfTasks
-    }
 }

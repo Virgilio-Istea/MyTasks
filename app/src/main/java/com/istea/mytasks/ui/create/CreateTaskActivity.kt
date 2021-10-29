@@ -1,13 +1,11 @@
 package com.istea.mytasks.ui.create
 
-import android.R.attr.button
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.view.MotionEvent
 import android.view.View.OnFocusChangeListener
@@ -102,7 +100,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         task = Task("", Calendar.getInstance().time, "", Calendar.getInstance().time, "")
 
         initializeFields()
-        giveMicPermissions()
+        giveMicStoragePermissions()
 
         if (create){
             grupoId = (intent.getSerializableExtra("group") as Group).documentId
@@ -284,7 +282,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             guardarVoz.isEnabled = true
     }
 
-    private fun giveMicPermissions() {
+    private fun giveMicStoragePermissions() {
         if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECORD_AUDIO), 111)
         } else {
