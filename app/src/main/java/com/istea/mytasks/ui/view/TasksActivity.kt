@@ -68,11 +68,14 @@ class TasksActivity : AppCompatActivity() {
                 for (task in document.data?.get("tasks") as ArrayList<HashMap<*,*>>){
                     val taskAux = Task(task["title"].toString(),
                             (task["dateTask"] as Timestamp).toDate() ,
-                            if (task["description"] != null ){
-                                task["description"].toString()}
+                            if (task["descriptionTask"] != null ){
+                                task["descriptionTask"].toString()}
                             else {""},
                             if (task["dateReminder"] != null){
                                     (task["dateReminder"] as Timestamp).toDate()
+                            } else {null},
+                            if (task["reminderId"] != null){
+                                (task["reminderId"].toString())
                             } else {null},
                             task["groupId"].toString()
                             )

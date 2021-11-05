@@ -5,6 +5,7 @@ import java.io.Serializable
 data class User(
         val userId: String,
         val name: String,
+        var notificationId : String,
         var groups: ArrayList<Group>
 ) : Serializable
 

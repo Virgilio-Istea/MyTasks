@@ -97,7 +97,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         val create = intent.getBooleanExtra("create", true)
 
         grupoId = ""
-        task = Task("", Calendar.getInstance().time, "", Calendar.getInstance().time, "")
+        task = Task("", Calendar.getInstance().time, "", Calendar.getInstance().time, "","")
 
         initializeFields()
         giveMicStoragePermissions()
@@ -429,6 +429,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 dateTask,
                 descriptionTask.text.toString(),
                 dateReminder,
+               "",
                 (activityGroups.selectedItem as Group).toId()
         )
     }

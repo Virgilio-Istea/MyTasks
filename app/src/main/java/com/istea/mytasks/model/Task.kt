@@ -8,5 +8,6 @@ data class Task(
         var dateTask : Date,
         val descriptionTask : String,
         var dateReminder : Date?,
+        var reminderId : String?,
         var groupId : String
 ) : Serializable

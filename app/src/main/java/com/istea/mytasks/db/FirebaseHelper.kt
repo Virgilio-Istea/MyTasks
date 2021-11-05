@@ -3,16 +3,20 @@ package com.istea.mytasks.db
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
-import com.istea.mytasks.model.Group
-import com.istea.mytasks.model.Task
-import com.istea.mytasks.model.TaskList
-import com.istea.mytasks.model.User
+import com.google.firebase.messaging.FirebaseMessaging
+import com.istea.mytasks.model.*
+import java.util.*
+import java.util.Collections.replaceAll
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class FirebaseHelper {
 
@@ -27,6 +31,8 @@ class FirebaseHelper {
 
     private val _tasksResult = MutableLiveData<QuerySnapshot>()
     val tasksResult: LiveData<QuerySnapshot> = _tasksResult
+
+    private lateinit var user : User
 
     init{
         db = Firebase.firestore
@@ -76,16 +82,40 @@ class FirebaseHelper {
                 .addOnSuccessListener { document ->
                     if (document.exists()) {
                         _groupsResult.value = document
+                        user = User(getUser(),
+                                Firebase.auth.currentUser!!.displayName!!,
+                                document.data?.get("notificationId") as String,
+                                arrayListOf())
                     }
                     else {
-                        groupsDB.set(User(getUser(),Firebase.auth.currentUser!!.displayName!!,
-                                arrayListOf()))
+                        user = User(getUser(),Firebase.auth.currentUser!!.displayName!!,
+                                "", arrayListOf())
+                        groupsDB.set(user)
                         createNoGroup()
                     }
+                    getNotificationToken()
                 }
                 .addOnFailureListener { exception ->
                     Log.w("", "Error getting documents: ", exception)
                 }
+    }
+
+    fun getNotificationToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            if (user.notificationId != token) {
+                val userDB = db.collection("users").document(getUser())
+                userDB.update("notificationId", token)
+                user.notificationId = token
+            }
+        })
     }
 
     fun createGroup(group : Group){
@@ -168,8 +198,6 @@ class FirebaseHelper {
         db.collection("users").document(getUser())
                 .update("groups", FieldValue.arrayUnion(mapOf(group.name to group.documentId)))
 
-
-
     }
 
     fun getTasks(){
@@ -179,11 +207,11 @@ class FirebaseHelper {
         // Create a query against the collection.
         groupsDB.get()
                 .addOnSuccessListener { document ->
-                    var groupsDoc = document.data?.get("groups") as ArrayList<HashMap<String, String>>
+                    val groupsDoc = document.data?.get("groups") as ArrayList<HashMap<String, String>>
 
                     for (groups in groupsDoc){
                         for (group in groups){
-                            var groupAux = Group(group.value, group.key)
+                            val groupAux = Group(group.value, group.key)
                             getTasksByGroup(groupAux)
                         }
                     }
@@ -222,6 +250,10 @@ class FirebaseHelper {
                 .collection("groups").document(group)
                 .collection(status).document("0")
 
+        if (task.dateReminder != null) {
+            val task = createNotification(task)
+        }
+
         //TODO check document size and create a new one in case it is full
 
         taskDB.update("tasks",FieldValue.arrayUnion(task))
@@ -234,6 +266,10 @@ class FirebaseHelper {
                 .collection("groups").document(group)
                 .collection(status).document("0")
 
+        if (task.dateReminder != null) {
+            deleteNotification(task)
+        }
+
         taskDB.update("tasks",FieldValue.arrayRemove(task))
     }
 
@@ -243,8 +279,80 @@ class FirebaseHelper {
     }
 
     fun toggleTaskCompletion(task : Task, newStatus: String, OldStatus : String) {
-        val toggledTask = Task(task.title,task.dateTask,task.descriptionTask,task.dateReminder, task.groupId)
 
-        modifyTask(toggledTask, task.groupId, newStatus, task, task.groupId, OldStatus)
+        modifyTask(task, task.groupId, newStatus, task, task.groupId, OldStatus)
+    }
+
+    private fun createNotification(task : Task):Task{
+        db = Firebase.firestore
+        val notificationsDB = db.collection("notifications").document(getUser())
+
+        //TODO check document size and create a new one in case it is full
+
+        val notificationId = UUID.randomUUID().toString()
+            .replace("-", "").toUpperCase();
+
+        notificationsDB.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    notificationsDB.update(
+                        "notifications",
+                        FieldValue.arrayUnion(
+                            Notification(
+                                task.title,
+                                task.dateTask,
+                                task.dateReminder!!,
+                                getUser(),
+                                notificationId
+                            )
+                        )
+                    )
+                }
+                else{
+                    val notifications = arrayListOf<Notification>()
+                    notifications.add(Notification(
+                        task.title,
+                        task.dateTask,
+                        task.dateReminder!!,
+                        getUser(),
+                        notificationId
+                    ))
+                    notificationsDB.set(NotificationList(notifications))
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("", "Error getting documents: ", exception)
+            }
+
+        task.reminderId = notificationId
+
+        return task
+    }
+
+    private fun deleteNotification(task : Task){
+        db = Firebase.firestore
+        val notificationsDB = db.collection("notifications").document(getUser())
+
+        notificationsDB.get()
+            .addOnSuccessListener { document ->
+
+                val notificationsDoc = document.data?.get("notifications") as ArrayList<HashMap<*,*>>
+
+                for (doc in notificationsDoc){
+                    val notification = Notification(doc["title"].toString(),
+                                                    (doc["dateTask"] as Timestamp).toDate(),
+                                                    (doc["dateReminder"] as Timestamp).toDate(),
+                                                    doc["userId"].toString(),
+                                                    doc["reminderId"].toString())
+                    if (notification.reminderId == task.reminderId){
+                        notificationsDB.update("notifications",
+                            FieldValue.arrayRemove(notification))
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("", "Error getting documents: ", exception)
+            }
+
     }
 }

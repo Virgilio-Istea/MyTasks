@@ -63,4 +63,7 @@
 
     <string name="material_calendar_today_button">Hoy</string>
     <string name="material_calendar_negative_button">Cancelar</string>
+
+    <string name="fcm_message">FCM Message</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 </resources>
