@@ -32,6 +32,7 @@ class TasksActivity : AppCompatActivity() {
     private lateinit var calendarAcitivtyButton: ImageView
 
     private lateinit var tasksList : ArrayList<TaskList>
+    private lateinit var taskExpandableList : ArrayList<ExpandableTasks>
 
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +86,7 @@ class TasksActivity : AppCompatActivity() {
                         taskListAux))
             }
 
-            val taskExpandableList = toExpandableList(tasksList)
+            taskExpandableList = toExpandableList(tasksList)
 
             recycleViewTasks.adapter = TaskAdapter(this, taskExpandableList){selectedItem ->
                 when(selectedItem){
