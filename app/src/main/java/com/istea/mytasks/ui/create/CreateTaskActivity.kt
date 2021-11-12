@@ -2,6 +2,7 @@ package com.istea.mytasks.ui.create
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
@@ -272,8 +273,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         guardarVoz.setOnTouchListener(OnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    createFilePathName()
                     removeFileIfExists()
+                    createFilePathName()
                     startRecording()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -284,11 +285,12 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             false
         })
 
-        playButton.setOnClickListener(){
+        playButton.setOnClickListener{
             var mp = MediaPlayer()
             mp.setDataSource(fileNamePath)
             mp.prepare()
             mp.start()
+
         }
 
 
@@ -320,8 +322,14 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private fun createFilePathName() {
         if(fileNamePath == "") {
             val uuid = UUID.randomUUID()
-            val randomUUIDString = uuid.toString()
-            fileNamePath = Environment.getExternalStorageDirectory().toString() + "$randomUUIDString/" + ".3gp"
+            val randomUUIDString = "$uuid.3gp"
+            var contextWrapper = ContextWrapper(applicationContext)
+            var soundDirectory: File? = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+
+            var file = File(soundDirectory, randomUUIDString)
+
+            fileNamePath = file.path
+
         }
     }
 
@@ -337,10 +345,10 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
         mRecorder.setOutputFile(fileNamePath)
-        mRecorder.prepare()
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
 
+        mRecorder.prepare()
         mRecorder.start()
     }
 
