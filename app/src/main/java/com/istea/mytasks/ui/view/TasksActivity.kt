@@ -77,8 +77,9 @@ class TasksActivity : AppCompatActivity() {
                             if (task["reminderId"] != null){
                                 (task["reminderId"].toString())
                             } else {null},
-                            task["groupId"].toString()
-                            )
+                            task["groupId"].toString(),
+                            task["voicePathFile"].toString()
+                    )
                     taskListAux.add(taskAux)
                 }
                 tasksList.add(TaskList(document.data?.get("status").toString(),

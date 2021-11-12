@@ -4,9 +4,10 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
+import android.os.Environment
 import android.view.MotionEvent
 import android.view.View.OnFocusChangeListener
 import android.view.View.OnTouchListener
@@ -22,8 +23,7 @@ import com.istea.mytasks.model.Task
 import com.istea.mytasks.model.TaskViewModelFactory
 import com.istea.mytasks.ui.view.MainActivity
 import com.istea.mytasks.ui.viewmodel.TaskViewModel
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -50,6 +50,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     private lateinit var grupoId : String
     private lateinit var status : String
     private lateinit var task : Task
+    private lateinit var fileNamePath: String
+    private lateinit var playButton: Button
 
     private var mRecorder = MediaRecorder()
 
@@ -97,18 +99,24 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         val create = intent.getBooleanExtra("create", true)
 
         grupoId = ""
-        task = Task("", Calendar.getInstance().time, "", Calendar.getInstance().time, "","")
+        task = Task("", Calendar.getInstance().time, "", Calendar.getInstance().time, "", "", "")
 
         initializeFields()
         giveMicStoragePermissions()
 
         if (create){
             grupoId = (intent.getSerializableExtra("group") as Group).documentId
+
+            createFilePathName()
         }
         if (!create){
             task = intent.getSerializableExtra("task") as Task
             grupoId = intent.getStringExtra("group").toString()
             status = intent.getStringExtra("status").toString()
+
+            if(fileNamePath != ""){
+                enablePlayButton()
+            }
 
             val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val hourFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -264,14 +272,24 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         guardarVoz.setOnTouchListener(OnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    createFilePathName()
+                    removeFileIfExists()
                     startRecording()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     stopRecording()
+                    enablePlayButton()
                 }
             }
             false
         })
+
+        playButton.setOnClickListener(){
+            var mp = MediaPlayer()
+            mp.setDataSource(fileNamePath)
+            mp.prepare()
+            mp.start()
+        }
 
 
     }
@@ -282,6 +300,10 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             guardarVoz.isEnabled = true
     }
 
+    private fun enablePlayButton(){
+        playButton.isEnabled = true
+    }
+
     private fun giveMicStoragePermissions() {
         if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECORD_AUDIO), 111)
@@ -290,48 +312,44 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         }
 
         if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),112)
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 112)
         }
 
     }
 
+    private fun createFilePathName() {
+        if(fileNamePath == "") {
+            val uuid = UUID.randomUUID()
+            val randomUUIDString = uuid.toString()
+            fileNamePath = Environment.getExternalStorageDirectory().toString() + "$randomUUIDString/" + ".3gp"
+        }
+    }
+
+    private fun removeFileIfExists() {
+
+        var file = File(fileNamePath)
+        if(file.exists()){
+            file.delete()
+        }
+    }
+
     private fun startRecording() {
-        // Byte array for audio record
-        val byteArrayOutputStream = ByteArrayOutputStream()
-
-        val descriptors = ParcelFileDescriptor.createPipe()
-        val parcelRead = ParcelFileDescriptor(descriptors[0])
-        val parcelWrite = ParcelFileDescriptor(descriptors[1])
-
-        val inputStream: InputStream = ParcelFileDescriptor.AutoCloseInputStream(parcelRead)
 
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-        mRecorder.setOutputFile(parcelWrite.fileDescriptor)
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        mRecorder.setOutputFile(fileNamePath)
         mRecorder.prepare()
 
         mRecorder.start()
-
-        var read: Int
-        val data = ByteArray(16384)
-
-        while (inputStream.read(data, 0, data.size).also { read = it } != -1) {
-            byteArrayOutputStream.write(data, 0, read)
-        }
-
-        byteArrayOutputStream.flush()
-
-        byteArrayOutputStream.toByteArray()
     }
 
     private fun stopRecording() {
         mRecorder.stop()
         mRecorder.reset()
         mRecorder.release()
-
+        enablePlayButton()
     }
-
 
     private fun showDatePickerDialog(dateEditText: String) {
 
@@ -347,8 +365,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         datePickerDialog.show()
     }
-
-
 
     private fun initializeFields(){
         titleTask = findViewById(R.id.ta_et_task_titulo)
@@ -368,6 +384,10 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         guardarVoz = findViewById(R.id.ta_btn_task_descripcion_audio)
         guardarVoz.isEnabled = false;
+        fileNamePath = ""
+        playButton = findViewById(R.id.ta_btn_task_play_description_audio)
+        playButton.isEnabled = false
+
     }
 
     private fun setTodayDate(): String {
@@ -376,7 +396,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         val dateFormat = SimpleDateFormat("dd/MM/yyyy")
         return dateFormat.format(calendar.time)
     }
-
 
     @Suppress("UNCHECKED_CAST")
     private fun fillDropdownListGroups(grupo: String){
@@ -429,9 +448,10 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 dateTask,
                 descriptionTask.text.toString(),
                 dateReminder,
-               "",
-                (activityGroups.selectedItem as Group).toId()
-        )
+                "",
+                (activityGroups.selectedItem as Group).toId(),
+                 fileNamePath
+                )
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {

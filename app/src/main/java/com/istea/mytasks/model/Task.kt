@@ -9,5 +9,6 @@ data class Task(
         val descriptionTask : String,
         var dateReminder : Date?,
         var reminderId : String?,
-        var groupId : String
+        var groupId : String,
+        var voicePathFile: String
 ) : Serializable
