@@ -6,52 +6,79 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.istea.mytasks.R
+import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.Task
+import com.istea.mytasks.model.TaskList
+import com.istea.mytasks.model.TaskWithStatus
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CalendarTaskAdapter(private val dataset: ArrayList<Task>) : RecyclerView.Adapter<CalendarTaskAdapter.ViewHolder>(){
-
+class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerView.Adapter<CalendarTaskAdapter.ViewHolder>(){
+    var tasks = ArrayList<TaskWithStatus>()
     class ViewHolder(view: View):RecyclerView.ViewHolder(view){
 
         val title: TextView
         var dateTask : TextView
         val descriptionTask : TextView
         var dateReminder : TextView
+        var status : TextView
+
 
         init {
             title = view.findViewById(R.id.ta_i_title)
             dateTask = view.findViewById(R.id.ta_i_hora)
             descriptionTask = view.findViewById(R.id.ta_i_description)
             dateReminder = view.findViewById(R.id.ta_i_recordatorio)
+            status = view.findViewById(R.id.ta_i_status)
         }
     }
 
     override fun getItemCount(): Int {
-        return dataset.count()
+        var count = 0
+        for (tasklist in dataset){
+            count += tasklist.tasks.count()
+        }
+        return count
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.task_item, parent, false)
+
+        for (tasklist in dataset){
+            for (task in tasklist.tasks){
+                tasks.add( TaskWithStatus(task.title,
+                    task.dateTask,
+                    task.descriptionTask,
+                    task.dateReminder,
+                    task.reminderId,
+                    task.groupId,
+                    tasklist.status))
+            }
+        }
 
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val timeStampFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
-        val GetDate = dataset[position].dateTask
+        val GetDate = tasks[position].dateTask
         val dateTaskStr: String = timeStampFormat.format(GetDate)
         var dateTaskReminderStr = ""
 
-        if(dataset[position].dateReminder != null) {
-            val GetDateReminder = dataset[position].dateReminder
+        if(tasks[position].dateReminder != null) {
+            val GetDateReminder = tasks[position].dateReminder
             dateTaskReminderStr = timeStampFormat.format(GetDateReminder)
         }
 
-        holder.title.text = dataset[position].title
+        holder.title.text = tasks[position].title
         holder.dateTask.text = dateTaskStr
-        holder.descriptionTask.text = dataset[position].descriptionTask
+        holder.descriptionTask.text = tasks[position].descriptionTask
         holder.dateReminder.text = dateTaskReminderStr
+        when (tasks[position].status){
+            Group.DONE -> holder.status.text = "Listo"
+            Group.TODO -> holder.status.text = "Para Hacer"
+        }
+
     }
 
 
