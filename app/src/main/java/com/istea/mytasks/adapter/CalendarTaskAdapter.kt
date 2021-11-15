@@ -1,9 +1,12 @@
 package com.istea.mytasks.adapter
 
+import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.istea.mytasks.R
 import com.istea.mytasks.model.Group
@@ -22,7 +25,7 @@ class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerVi
         val descriptionTask : TextView
         var dateReminder : TextView
         var status : TextView
-
+        var soundDescription : Button
 
         init {
             title = view.findViewById(R.id.ta_i_title)
@@ -30,6 +33,7 @@ class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerVi
             descriptionTask = view.findViewById(R.id.ta_i_description)
             dateReminder = view.findViewById(R.id.ta_i_recordatorio)
             status = view.findViewById(R.id.ta_i_status)
+            soundDescription = view.findViewById(R.id.ta_i_playDescription)
         }
     }
 
@@ -52,7 +56,8 @@ class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerVi
                     task.dateReminder,
                     task.reminderId,
                     task.groupId,
-                    tasklist.status))
+                    tasklist.status,
+                    task.voicePathFile))
             }
         }
 
@@ -68,6 +73,20 @@ class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerVi
         if(tasks[position].dateReminder != null) {
             val GetDateReminder = tasks[position].dateReminder
             dateTaskReminderStr = timeStampFormat.format(GetDateReminder)
+        }
+
+
+        holder.soundDescription.isVisible = false
+
+        if(tasks[position].soundFile != ""){
+            holder.soundDescription.isVisible = true
+
+            holder.soundDescription.setOnClickListener(){
+                var mp = MediaPlayer()
+                mp.setDataSource(tasks[position].soundFile)
+                mp.prepare()
+                mp.start()
+            }
         }
 
         holder.title.text = tasks[position].title

@@ -10,5 +10,6 @@ data class TaskWithStatus(
         var dateReminder : Date?,
         var reminderId : String?,
         var groupId : String,
-        var status : String
+        var status : String,
+        var soundFile: String
 ) : Serializable

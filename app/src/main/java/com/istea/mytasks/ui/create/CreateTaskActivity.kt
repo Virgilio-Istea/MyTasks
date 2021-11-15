@@ -56,6 +56,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private var mRecorder = MediaRecorder()
 
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,13 +108,12 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         if (create){
             grupoId = (intent.getSerializableExtra("group") as Group).documentId
-
-            createFilePathName()
         }
         if (!create){
             task = intent.getSerializableExtra("task") as Task
             grupoId = intent.getStringExtra("group").toString()
             status = intent.getStringExtra("status").toString()
+            fileNamePath = task.voicePathFile
 
             if(fileNamePath != ""){
                 enablePlayButton()
@@ -271,14 +271,17 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         }
 
         guardarVoz.setOnTouchListener(OnTouchListener { _, event ->
+            if(fileNamePath == ""){
+                createFilePathName()
+            }
+
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    removeFileIfExists()
-                    createFilePathName()
                     startRecording()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     stopRecording()
+
                     enablePlayButton()
                 }
             }
@@ -320,7 +323,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun createFilePathName() {
-        if(fileNamePath == "") {
+        if(task.voicePathFile == "") {
             val uuid = UUID.randomUUID()
             val randomUUIDString = "$uuid.3gp"
             var contextWrapper = ContextWrapper(applicationContext)
@@ -329,7 +332,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             var file = File(soundDirectory, randomUUIDString)
 
             fileNamePath = file.path
-
         }
     }
 
@@ -342,7 +344,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun startRecording() {
-
+        mRecorder = MediaRecorder()
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
         mRecorder.setOutputFile(fileNamePath)
@@ -392,10 +394,9 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         guardarVoz = findViewById(R.id.ta_btn_task_descripcion_audio)
         guardarVoz.isEnabled = false;
-        fileNamePath = ""
+        fileNamePath = task.voicePathFile
         playButton = findViewById(R.id.ta_btn_task_play_description_audio)
         playButton.isEnabled = false
-
     }
 
     private fun setTodayDate(): String {

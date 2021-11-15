@@ -1,13 +1,13 @@
 package com.istea.mytasks.ui.view
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Timestamp
@@ -19,9 +19,8 @@ import com.istea.mytasks.model.Group
 import com.istea.mytasks.model.Task
 import com.istea.mytasks.model.TaskList
 import com.istea.mytasks.ui.create.CreateTaskActivity
+import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class TasksActivity : AppCompatActivity() {
 
@@ -49,7 +48,7 @@ class TasksActivity : AppCompatActivity() {
         recycleViewTasks = findViewById(R.id.recyclerViewTasks)
         calendarAcitivtyButton = findViewById(R.id.calendar_button)
 
-        recycleViewTasks.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL,false)
+        recycleViewTasks.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
         title.text = group.name
 
@@ -64,20 +63,26 @@ class TasksActivity : AppCompatActivity() {
 
         firebase.tasksResult.observe(this, {
 
-            for(document in it.documents){
+            for (document in it.documents) {
                 val taskListAux = arrayListOf<Task>()
-                for (task in document.data?.get("tasks") as ArrayList<HashMap<*,*>>){
+                for (task in document.data?.get("tasks") as ArrayList<HashMap<*, *>>) {
                     val taskAux = Task(task["title"].toString(),
-                            (task["dateTask"] as Timestamp).toDate() ,
-                            if (task["descriptionTask"] != null ){
-                                task["descriptionTask"].toString()}
-                            else {""},
-                            if (task["dateReminder"] != null){
-                                    (task["dateReminder"] as Timestamp).toDate()
-                            } else {null},
-                            if (task["reminderId"] != null){
+                            (task["dateTask"] as Timestamp).toDate(),
+                            if (task["descriptionTask"] != null) {
+                                task["descriptionTask"].toString()
+                            } else {
+                                ""
+                            },
+                            if (task["dateReminder"] != null) {
+                                (task["dateReminder"] as Timestamp).toDate()
+                            } else {
+                                null
+                            },
+                            if (task["reminderId"] != null) {
                                 (task["reminderId"].toString())
-                            } else {null},
+                            } else {
+                                null
+                            },
                             task["groupId"].toString(),
                             task["voicePathFile"].toString()
                     )
@@ -89,8 +94,8 @@ class TasksActivity : AppCompatActivity() {
 
             taskExpandableList = toExpandableList(tasksList)
 
-            recycleViewTasks.adapter = TaskAdapter(this, taskExpandableList){selectedItem ->
-                when(selectedItem){
+            recycleViewTasks.adapter = TaskAdapter(this, taskExpandableList) { selectedItem ->
+                when (selectedItem) {
                     is TaskAdapter.ListenerType.SelectTaskListener -> {
                         val intent = Intent(this@TasksActivity, CreateTaskActivity::class.java)
                         intent.putExtra("task", selectedItem.task)
@@ -104,10 +109,12 @@ class TasksActivity : AppCompatActivity() {
                     }
                     is TaskAdapter.ListenerType.ToggleTaskCompletionListener -> {
                         var status = Group.TODO
-                        if (selectedItem.status == Group.TODO){status = Group.DONE}
-                        firebase.toggleTaskCompletion(selectedItem.task, status,selectedItem.status)
+                        if (selectedItem.status == Group.TODO) {
+                            status = Group.DONE
+                        }
+                        firebase.toggleTaskCompletion(selectedItem.task, status, selectedItem.status)
 
-                        refreshActivity(group,groups)
+                        refreshActivity(group, groups)
                     }
                 }
             }
@@ -128,7 +135,7 @@ class TasksActivity : AppCompatActivity() {
         }
     }
 
-    private fun toExpandableList(taskList : ArrayList<TaskList>) : ArrayList<ExpandableTasks>{
+    private fun toExpandableList(taskList: ArrayList<TaskList>) : ArrayList<ExpandableTasks>{
         val expandableModel = arrayListOf<ExpandableTasks>()
         val taskListUndone = arrayListOf<Task>()
         val taskListDone = arrayListOf<Task>()
@@ -141,16 +148,16 @@ class TasksActivity : AppCompatActivity() {
         }
 
         expandableModel.add(
-                ExpandableTasks(ExpandableTasks.PARENT, TaskList(Group.TODO,taskListUndone))
+                ExpandableTasks(ExpandableTasks.PARENT, TaskList(Group.TODO, taskListUndone))
         )
         expandableModel.add(
-                ExpandableTasks(ExpandableTasks.PARENT, TaskList(Group.DONE,taskListDone))
+                ExpandableTasks(ExpandableTasks.PARENT, TaskList(Group.DONE, taskListDone))
         )
 
         return expandableModel
     }
 
-    private fun showPopup(v: View, task: Task, group : Group, groups : HashMap<String, Group>, status : String) {
+    private fun showPopup(v: View, task: Task, group: Group, groups: HashMap<String, Group>, status: String) {
         PopupMenu(this, v).apply {
             setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -163,9 +170,9 @@ class TasksActivity : AppCompatActivity() {
                     }
                     R.id.action_delete -> {
                         firebase.deleteTask(task, group.documentId, status)
-
+                        deleteSoundFile(task.voicePathFile)
                         groups[group.documentId] = group
-                        refreshActivity(group,groups)
+                        refreshActivity(group, groups)
                         true
                     }
                     else -> false
@@ -176,7 +183,14 @@ class TasksActivity : AppCompatActivity() {
         }
     }
 
-    private fun refreshActivity(group : Group, groups : HashMap<String, Group>){
+    private fun deleteSoundFile(fileName: String) {
+        val myFile = File(fileName)
+        if (myFile.exists()) {
+            myFile.delete()
+        }
+    }
+
+    private fun refreshActivity(group: Group, groups: HashMap<String, Group>){
         finish()
         //TODO: keep opened lists open
         overridePendingTransition(0, 0)

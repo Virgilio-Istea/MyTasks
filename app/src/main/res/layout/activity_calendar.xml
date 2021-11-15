@@ -27,13 +27,5 @@
         app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976">
-
-        <Button
-            android:id="@+id/ca_create_activity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/crear_actividad" />
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0.976"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
