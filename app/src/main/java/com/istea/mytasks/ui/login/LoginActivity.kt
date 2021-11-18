@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
+        signInButton.visibility = View.VISIBLE
         signInButton.setSize(SignInButton.SIZE_WIDE)
 
         signInButton.setOnClickListener {
