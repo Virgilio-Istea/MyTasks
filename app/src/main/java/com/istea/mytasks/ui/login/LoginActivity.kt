@@ -61,13 +61,12 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
-        signInButton.setSize(SignInButton.SIZE_STANDARD)
+        signInButton.setSize(SignInButton.SIZE_WIDE)
 
         signInButton.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
             loading.visibility = View.VISIBLE
-
         }
     }
 
