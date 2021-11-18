@@ -42,6 +42,7 @@ class FirebaseHelper {
             cacheSizeBytes = FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED
         }
         db.firestoreSettings = settings
+
     }
 
     fun getUser() : String{
@@ -339,14 +340,15 @@ class FirebaseHelper {
                 val notificationsDoc = document.data?.get("notifications") as ArrayList<HashMap<*,*>>
 
                 for (doc in notificationsDoc){
-                    val notification = Notification(doc["title"].toString(),
-                                                    (doc["dateTask"] as Timestamp).toDate(),
-                                                    (doc["dateReminder"] as Timestamp).toDate(),
-                                                    doc["userId"].toString(),
-                                                    doc["reminderId"].toString())
-                    if (notification.reminderId == task.reminderId){
-                        notificationsDB.update("notifications",
-                            FieldValue.arrayRemove(notification))
+                    if (doc["reminderId"].toString() == task.reminderId){
+                        notificationsDB.update(
+                                "notifications",
+                            FieldValue.arrayRemove(
+                                    Notification(doc["title"].toString(),
+                                            (doc["dateTask"] as Timestamp).toDate(),
+                                            (doc["dateReminder"] as Timestamp).toDate(),
+                                            doc["userId"].toString(),
+                                            doc["reminderId"].toString())))
                     }
                 }
             }
