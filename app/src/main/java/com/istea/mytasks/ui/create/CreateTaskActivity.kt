@@ -276,23 +276,32 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             showDatePickerDialog("dateReminderTask")
         }
 
-        guardarVoz.setOnTouchListener(OnTouchListener { _, event ->
-            if (fileNamePath == "") {
-                createFilePathName()
-            }
+        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        if(audioRecorder.mode == AudioManager.MODE_IN_COMMUNICATION){
+            Toast.makeText(this,"El microfono esta en uso, cierre el aplicativo que lo usa y vuelva a intentarlo", Toast.LENGTH_SHORT)
+        }
 
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    startRecording()
-                }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    stopRecording()
+        if(audioRecorder.mode == AudioManager.MODE_NORMAL){
 
-                    enablePlayButton()
+            guardarVoz.setOnTouchListener(OnTouchListener { _, event ->
+
+                if (fileNamePath == "") {
+                    createFilePathName()
                 }
-            }
-            false
-        })
+
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        startRecording()
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        stopRecording()
+
+                        enablePlayButton()
+                    }
+                }
+                false
+            })
+        }
 
         playButton.setOnClickListener{
             var mp = MediaPlayer()
@@ -366,13 +375,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
     private fun startRecording() {
 
-        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-        if(audioRecorder.mode == AudioManager.MODE_IN_COMMUNICATION){
-            Toast.makeText(this,"El microfono esta en uso, cierre el aplicativo que lo usa y vuelva a intentarlo", Toast.LENGTH_SHORT)
-        }
-
-        if(audioRecorder.mode == AudioManager.MODE_NORMAL){
             mRecorder = MediaRecorder()
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
@@ -381,15 +383,13 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
             mRecorder.prepare()
             mRecorder.start()
-        }
-
     }
 
     private fun stopRecording() {
-        mRecorder.stop()
-        mRecorder.reset()
-        mRecorder.release()
-        enablePlayButton()
+            mRecorder.stop()
+            mRecorder.reset()
+            mRecorder.release()
+            enablePlayButton()
     }
 
     private fun showDatePickerDialog(dateEditText: String) {
