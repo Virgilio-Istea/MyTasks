@@ -23,7 +23,7 @@
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="355dp"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+            app:srcCompat="@mipmap/icon" />
 
         <ProgressBar
             android:id="@+id/loading"
