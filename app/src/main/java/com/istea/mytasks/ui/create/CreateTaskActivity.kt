@@ -276,13 +276,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             showDatePickerDialog("dateReminderTask")
         }
 
-        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        if(audioRecorder.mode == AudioManager.MODE_IN_COMMUNICATION){
-            Toast.makeText(this,"El microfono esta en uso, cierre el aplicativo que lo usa y vuelva a intentarlo", Toast.LENGTH_SHORT)
-        }
-
-        if(audioRecorder.mode == AudioManager.MODE_NORMAL){
-
             guardarVoz.setOnTouchListener(OnTouchListener { _, event ->
 
                 if (fileNamePath == "") {
@@ -301,7 +294,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                 }
                 false
             })
-        }
+
 
         playButton.setOnClickListener{
             var mp = MediaPlayer()
@@ -353,16 +346,27 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun createFilePathName() {
-        if(task.voicePathFile == "") {
-            val uuid = UUID.randomUUID()
-            val randomUUIDString = "$uuid.3gp"
-            var contextWrapper = ContextWrapper(applicationContext)
-            var soundDirectory: File? = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-            var file = File(soundDirectory, randomUUIDString)
+        if(audioRecorder.mode == AudioManager.MODE_NORMAL){
 
-            fileNamePath = file.path
+            if(fileNamePath == "") {
+                val uuid = UUID.randomUUID()
+                val randomUUIDString = "$uuid.3gp"
+                var contextWrapper = ContextWrapper(applicationContext)
+                var soundDirectory: File? = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+
+                var file = File(soundDirectory, randomUUIDString)
+
+                fileNamePath = file.path
+            }
         }
+
+        if(audioRecorder.mode == AudioManager.MODE_IN_COMMUNICATION)
+        {
+            Toast.makeText(this,"El microfono esta siendo usado, para grabar cierre las otras aplicaciones y vuelva a intentarlo", Toast.LENGTH_SHORT)
+        }
+
     }
 
     private fun removeFileIfExists() {
@@ -374,6 +378,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun startRecording() {
+        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        if(audioRecorder.mode == AudioManager.MODE_NORMAL) {
 
             mRecorder = MediaRecorder()
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -383,13 +389,20 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
             mRecorder.prepare()
             mRecorder.start()
+        }
+
     }
 
     private fun stopRecording() {
+        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        if(audioRecorder.mode == AudioManager.MODE_NORMAL) {
+
             mRecorder.stop()
             mRecorder.reset()
             mRecorder.release()
             enablePlayButton()
+        }
+
     }
 
     private fun showDatePickerDialog(dateEditText: String) {
