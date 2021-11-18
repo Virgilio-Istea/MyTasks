@@ -318,7 +318,12 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun enablePlayButton(){
-        playButton.isEnabled = true
+        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        if(audioRecorder.mode == AudioManager.MODE_NORMAL){
+            playButton.isEnabled = true
+        }
+        
     }
 
     private fun giveMicStoragePermissions() {
