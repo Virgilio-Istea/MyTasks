@@ -20,6 +20,7 @@
         tools:layout_editor_absoluteY="369dp">
 
         <ImageView
+            android:clickable="true"
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="355dp"

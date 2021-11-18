@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -49,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
 
         val signInButton = findViewById<SignInButton>(R.id.sign_in_button)
         val loading = findViewById<ProgressBar>(R.id.loading)
+        val icon = findViewById<ImageView>(R.id.imageView)
 
         firebase.userResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
@@ -65,6 +67,11 @@ class LoginActivity : AppCompatActivity() {
         signInButton.setSize(SignInButton.SIZE_WIDE)
 
         signInButton.setOnClickListener {
+            val signInIntent = googleSignInClient.signInIntent
+            startActivityForResult(signInIntent, RC_SIGN_IN)
+            loading.visibility = View.VISIBLE
+        }
+        icon.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
             loading.visibility = View.VISIBLE
