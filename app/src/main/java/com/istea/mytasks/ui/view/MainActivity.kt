@@ -9,6 +9,7 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.messaging.FirebaseMessaging
 import com.istea.mytasks.R
 import com.istea.mytasks.adapter.GroupAdapter
 import com.istea.mytasks.db.FirebaseHelper
@@ -52,6 +53,8 @@ class MainActivity : AppCompatActivity() {
 
         var groupAux : Group
 
+        FirebaseMessaging.getInstance().subscribeToTopic(firebase.getUser())
+
         firebase.groupsResult.observe(this, {
             items.add(Group("","Todos"))
             for(group in it.data?.get("groups") as ArrayList<HashMap<String, String>>){
@@ -93,6 +96,7 @@ class MainActivity : AppCompatActivity() {
 
         logout.setOnClickListener {
             Toast.makeText(applicationContext, "Logged Out.", Toast.LENGTH_LONG).show()
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(firebase.getUser())
             firebase.logout()
             finish()
         }

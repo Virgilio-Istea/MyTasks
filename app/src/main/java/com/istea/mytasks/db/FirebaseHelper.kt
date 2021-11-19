@@ -13,6 +13,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.messaging.FirebaseMessaging
 import com.istea.mytasks.model.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -44,7 +45,7 @@ class FirebaseHelper {
 
     }
 
-    private fun getUser() : String{
+    fun getUser() : String{
         return Firebase.auth.currentUser!!.uid
     }
 
@@ -100,7 +101,7 @@ class FirebaseHelper {
                 }
     }
 
-    private fun getNotificationToken() {
+    fun getNotificationToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w("", "Fetching FCM registration token failed", task.exception)
@@ -154,6 +155,8 @@ class FirebaseHelper {
 
         db.collection("users").document(getUser())
                 .update("groups", FieldValue.arrayRemove(mapOf(group.name to group.documentId)))
+
+        //TODO DELETE GROUP COLLECTION
 
     }
 
@@ -292,6 +295,20 @@ class FirebaseHelper {
 
         val notificationId = UUID.randomUUID().toString()
             .replace("-", "").toUpperCase(Locale.ROOT)
+
+        val dateFormatter = SimpleDateFormat("dd/MM/yyyy - HH:mm - ", Locale.getDefault())
+
+        val message = mapOf(
+            "data" to { mapOf(
+                "title" to "Recordatório",
+                "message" to dateFormatter.format(task.dateTask) + task.title,
+                "isScheduled" to "true",
+                "scheduledTime" to task.dateReminder)
+        },
+            "topic" to getUser()
+        )
+
+
 
         notificationsDB.get()
             .addOnSuccessListener { document ->
