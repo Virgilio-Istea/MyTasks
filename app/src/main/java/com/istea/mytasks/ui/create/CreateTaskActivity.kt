@@ -14,11 +14,13 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.MotionEvent
+import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.View.OnTouchListener
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.view.doOnDetach
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.istea.mytasks.R
@@ -135,6 +137,8 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                     dateReminderTask.setText(dateFormatter.format(task.dateReminder!!))
                     hourReminderTask.setText(hourFormatter.format(task.dateReminder!!))
                     recordar.isChecked = true
+                    dateReminderTask.isEnabled = true
+                    hourReminderTask.isEnabled = true
                 }
 
                 createActivity.text = getString(R.string.modificar_actividad)
@@ -147,14 +151,13 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             if (create){
                 firebase.createTask(
                     createTaskObject(),
-                    (activityGroups.selectedItem as Group).documentId, Group.TODO
+                     Group.TODO
                 )
             }
             else {
                 firebase.modifyTask(
                     createTaskObject(),
-                    (activityGroups.selectedItem as Group).documentId,
-                    status, task, task.groupId, status
+                    status, task, status
                 )
             }
             val intent = Intent(this, MainActivity::class.java)
@@ -230,6 +233,25 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
                     hourReminderTask.text.toString(),
                     recordar.isChecked
                 )}
+
+        activityGroups.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if ((activityGroups.selectedItem as Group).toId() != task.groupId) {
+                    taskviewmodel.taskDataChanged(
+                        titleTask.text.toString(),
+                        descriptionTask.text.toString(),
+                        dateTask.text.toString(),
+                        hourTask.text.toString(),
+                        dateReminderTask.text.toString(),
+                        hourReminderTask.text.toString(),
+                        recordar.isChecked
+                    )
+                }
+            }
+        }
 
         recordar.setOnCheckedChangeListener { _, _ ->
 

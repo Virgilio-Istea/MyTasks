@@ -201,6 +201,7 @@ class FirebaseHelper {
 
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun getTasks(){
         db = Firebase.firestore
         val groupsDB = db.collection("users").document(getUser())
@@ -245,10 +246,10 @@ class FirebaseHelper {
                 }
     }
 
-    fun createTask(task: Task, group: String, status : String){
+    fun createTask(task: Task, status : String){
         db = Firebase.firestore
         val taskDB = db.collection("users").document(getUser())
-                .collection("groups").document(group)
+                .collection("groups").document(task.groupId)
                 .collection(status).document("0")
 
         if (task.dateReminder != null) {
@@ -260,11 +261,11 @@ class FirebaseHelper {
         taskDB.update("tasks",FieldValue.arrayUnion(task))
     }
 
-    fun deleteTask(task : Task, group: String, status : String){
+    fun deleteTask(task : Task, status : String){
         db = Firebase.firestore
 
         val taskDB = db.collection("users").document(getUser())
-                .collection("groups").document(group)
+                .collection("groups").document(task.groupId)
                 .collection(status).document("0")
 
         if (task.dateReminder != null) {
@@ -274,14 +275,14 @@ class FirebaseHelper {
         taskDB.update("tasks",FieldValue.arrayRemove(task))
     }
 
-    fun modifyTask(newTask : Task, newGroup : String, newStatus : String, oldTask : Task, oldGroup : String, oldStatus : String){
-        deleteTask(oldTask, oldGroup, oldStatus)
-        createTask(newTask, newGroup, newStatus)
+    fun modifyTask(newTask : Task, newStatus : String, oldTask : Task, oldStatus : String){
+        deleteTask(oldTask, oldStatus)
+        createTask(newTask, newStatus)
     }
 
     fun toggleTaskCompletion(task : Task, newStatus: String, OldStatus : String) {
 
-        modifyTask(task, task.groupId, newStatus, task, task.groupId, OldStatus)
+        modifyTask(task, newStatus, task, OldStatus)
     }
 
     private fun createNotification(task : Task):Task{
@@ -330,6 +331,7 @@ class FirebaseHelper {
         return task
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun deleteNotification(task : Task){
         db = Firebase.firestore
         val notificationsDB = db.collection("notifications").document(getUser())
@@ -341,14 +343,14 @@ class FirebaseHelper {
 
                 for (doc in notificationsDoc){
                     if (doc["reminderId"].toString() == task.reminderId){
+                        val notification = Notification(doc["title"].toString(),
+                            (doc["dateTask"] as Timestamp).toDate(),
+                            (doc["dateReminder"] as Timestamp).toDate(),
+                            doc["userId"].toString(),
+                            doc["reminderId"].toString())
                         notificationsDB.update(
                                 "notifications",
-                            FieldValue.arrayRemove(
-                                    Notification(doc["title"].toString(),
-                                            (doc["dateTask"] as Timestamp).toDate(),
-                                            (doc["dateReminder"] as Timestamp).toDate(),
-                                            doc["userId"].toString(),
-                                            doc["reminderId"].toString())))
+                            FieldValue.arrayRemove( notification ))
                     }
                 }
             }

@@ -169,7 +169,7 @@ class TasksActivity : AppCompatActivity() {
                         true
                     }
                     R.id.action_delete -> {
-                        firebase.deleteTask(task, group.documentId, status)
+                        firebase.deleteTask(task, status)
                         deleteSoundFile(task.voicePathFile)
                         groups[group.documentId] = group
                         refreshActivity(group, groups)
