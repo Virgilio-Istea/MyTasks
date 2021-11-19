@@ -164,28 +164,35 @@ class FirebaseHelper {
         db = Firebase.firestore
 
         val groupDB = db.collection("users")
-                .document(getUser())
-                .collection("groups")
-                .document(group.documentId)
-                .collection("tasks")
+            .document(getUser())
+            .collection("groups")
+            .document(group.documentId)
+
 
         val newGroupDB = db.collection("users")
-                .document(getUser())
-                .collection("groups")
-                .document(newGroup.documentId)
-                .collection("tasks")
+            .document(getUser())
+            .collection("groups")
+            .document(newGroup.documentId)
 
-        groupDB.get()
-            .addOnSuccessListener { documents ->
-                for (document in documents){
-                    newGroupDB.document(document.id).update("tasks",
-                            FieldValue.arrayUnion(document.data["tasks"]))
-                    groupDB.document(document.id).delete()
+
+        for (status in listOf(Group.TODO, Group.DONE)) {
+            groupDB.collection(status).get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        val tasks = document.data["tasks"] as ArrayList<*>
+                        for (task in tasks) {
+                            newGroupDB.collection(status).document(document.id).update(
+                                "tasks",
+                                FieldValue.arrayUnion(task)
+                            )
+                        }
+                        groupDB.collection(status).document(document.id).delete()
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("", "Error getting documents: ", exception)
-            }
+                .addOnFailureListener { exception ->
+                    Log.w("", "Error getting documents: ", exception)
+                }
+        }
     }
 
     fun modifyGroup(group : Group, oldGroup : Group) {
