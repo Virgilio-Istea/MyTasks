@@ -105,8 +105,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * @param token The new token.
      */
     private fun sendRegistrationToServer(token: String?) {
-        val firebase = FirebaseHelper()
-        //firebase.getNotificationToken()
+        FirebaseHelper()
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
     }
 

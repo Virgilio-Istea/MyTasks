@@ -44,7 +44,7 @@ class TaskAdapter (private val context: Context, private val dataSet: ArrayList<
 
         when(row.type){
             ExpandableTasks.PARENT -> {
-                when (row.parent.status.toString()) {
+                when (row.parent.status) {
                     Group.DONE -> (holder as ParentViewHolder).completed.text = context.getString(R.string.taskStatus, "Listo", row.parent.tasks.count())
                     Group.TODO -> (holder as ParentViewHolder).completed.text = context.getString(R.string.taskStatus,"Para Hacer", row.parent.tasks.count())
                 }
@@ -67,7 +67,7 @@ class TaskAdapter (private val context: Context, private val dataSet: ArrayList<
 
                 (holder as ChildViewHolder).taskName.text = row.child.title
 
-                if (row.status.toString() == Group.DONE) {
+                if (row.status == Group.DONE) {
                     holder.complete.setImageResource(R.drawable.baseline_radio_button_checked_24)
                 }
                 else {

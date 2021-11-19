@@ -7,20 +7,16 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
-import android.media.AudioRecord
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
-import android.view.View.OnTouchListener
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.view.doOnDetach
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.istea.mytasks.R
@@ -34,7 +30,6 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
@@ -298,28 +293,26 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             showDatePickerDialog("dateReminderTask")
         }
 
-            guardarVoz.setOnTouchListener(OnTouchListener { _, event ->
+        guardarVoz.setOnTouchListener { _, event ->
 
-                if (fileNamePath == "") {
-                    createFilePathName()
+            if (fileNamePath == "") {
+                createFilePathName()
+            }
+
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    startRecording()
                 }
-
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        startRecording()
-                    }
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        stopRecording()
-
-                        enablePlayButton()
-                    }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    stopRecording()
                 }
-                false
-            })
+            }
+            false
+        }
 
 
         playButton.setOnClickListener{
-            var mp = MediaPlayer()
+            val mp = MediaPlayer()
             mp.setDataSource(fileNamePath)
             mp.prepare()
             mp.start()
@@ -335,77 +328,111 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            guardarVoz.isEnabled = true
+        if(requestCode == 111) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                guardarVoz.isEnabled = true
+            }
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this,
+                    "El microfono no puede ser utilizado por falta de permisos (Mic)",
+                    Toast.LENGTH_SHORT).show()
+            }
+            if (grantResults[1] != PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this,
+                    "El audio no puede ser grabado por falta de permisos (Storage)",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+        if(requestCode == 112) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                guardarVoz.isEnabled = true
+            }
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                if(permissions[0] == android.Manifest.permission.RECORD_AUDIO) {
+                    Toast.makeText(
+                        this,
+                        "El microfono no puede ser utilizado por falta de permisos (Mic)",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else{
+                    Toast.makeText(this,
+                        "El audio no puede ser grabado por falta de permisos (Storage)",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun enablePlayButton(){
-        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        //val audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-        if(audioRecorder.mode == AudioManager.MODE_NORMAL){
+        //if(audioRecorder.mode == AudioManager.MODE_NORMAL){
             playButton.isEnabled = true
-        }
+        //}
         
     }
 
     private fun giveMicStoragePermissions() {
-        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+        if(ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.RECORD_AUDIO,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                111
+            )
+        } else if(ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(android.Manifest.permission.RECORD_AUDIO),
-                111
+                112
             )
-        } else {
-            guardarVoz.isEnabled = true
-        }
-
-        if(ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED){
+        } else if(ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 112
             )
         }
-
+        else {
+            guardarVoz.isEnabled = true
+        }
     }
 
     private fun createFilePathName() {
-        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         if(audioRecorder.mode == AudioManager.MODE_NORMAL){
-
-            if(fileNamePath == "") {
+            val file = File(fileNamePath)
+            if(!file.exists()){
                 val uuid = UUID.randomUUID()
                 val randomUUIDString = "$uuid.3gp"
-                var contextWrapper = ContextWrapper(applicationContext)
-                var soundDirectory: File? = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+                val contextWrapper = ContextWrapper(applicationContext)
+                val soundDirectory: File? = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
 
-                var file = File(soundDirectory, randomUUIDString)
+                val file = File(soundDirectory, randomUUIDString)
 
                 fileNamePath = file.path
             }
         }
-
-        if(audioRecorder.mode == AudioManager.MODE_IN_COMMUNICATION)
-        {
-            Toast.makeText(this,"El microfono esta siendo usado, para grabar cierre las otras aplicaciones y vuelva a intentarlo", Toast.LENGTH_SHORT)
-        }
-
     }
 
     private fun removeFileIfExists() {
 
-        var file = File(fileNamePath)
+        val file = File(fileNamePath)
         if(file.exists()){
             file.delete()
         }
     }
 
     private fun startRecording() {
-        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if(audioRecorder.mode == AudioManager.MODE_NORMAL) {
 
             mRecorder = MediaRecorder()
@@ -417,17 +444,32 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             mRecorder.prepare()
             mRecorder.start()
         }
+        if(audioRecorder.mode == AudioManager.MODE_IN_COMMUNICATION)
+        {
+            Toast.makeText(this,
+                "El microfono esta siendo usado, para grabar cierre las otras aplicaciones y vuelva a intentarlo",
+                Toast.LENGTH_SHORT).show()
+        }
 
     }
 
     private fun stopRecording() {
-        var audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioRecorder = this.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if(audioRecorder.mode == AudioManager.MODE_NORMAL) {
 
             mRecorder.stop()
             mRecorder.reset()
             mRecorder.release()
             enablePlayButton()
+            taskviewmodel.taskDataChanged(
+                titleTask.text.toString(),
+                descriptionTask.text.toString(),
+                dateTask.text.toString(),
+                hourTask.text.toString(),
+                dateReminderTask.text.toString(),
+                hourReminderTask.text.toString(),
+                recordar.isChecked
+            )
         }
 
     }
@@ -464,7 +506,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         dateTask.setText(setTodayDate())
 
         guardarVoz = findViewById(R.id.ta_btn_task_descripcion_audio)
-        guardarVoz.isEnabled = false;
+        guardarVoz.isEnabled = false
         fileNamePath = task.voicePathFile
         playButton = findViewById(R.id.ta_btn_task_play_description_audio)
         playButton.isEnabled = false

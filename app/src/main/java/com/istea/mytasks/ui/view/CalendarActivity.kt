@@ -27,10 +27,10 @@ class CalendarActivity : AppCompatActivity() {
         setTodayDateToCalendar()
 
         val intent = intent
-        var taskList = intent.getSerializableExtra("taskList") as ArrayList<TaskList>
+        val taskList = intent.getSerializableExtra("taskList") as ArrayList<TaskList>
         arrayTasksList = taskList
 
-        var events = convertToListOfEvents(arrayTasksList)
+        val events = convertToListOfEvents(arrayTasksList)
 
         calendarView.setEvents(events as List<EventDay>?)
 
@@ -43,7 +43,7 @@ class CalendarActivity : AppCompatActivity() {
             val initDay = Date(year - 1900, month, day, 0,0,0)
             val lastDay = Date(year - 1900, month, day, 23,59,59)
 
-            var tasksInDay = returnTasksBetweenDates(initDay, lastDay)
+            val tasksInDay = returnTasksBetweenDates(initDay, lastDay)
             for (tasklist in tasksInDay) {
                 tasklist.tasks.sortBy { it.dateTask }
             }
@@ -53,7 +53,7 @@ class CalendarActivity : AppCompatActivity() {
             }
 
             if(tasksInDay.count() > 0) {
-                var intent = Intent(this, CalendarTasksActivity::class.java)
+                val intent = Intent(this, CalendarTasksActivity::class.java)
                 intent.putExtra("tasks", tasksInDay)
                 startActivity(intent)
             }
@@ -62,9 +62,9 @@ class CalendarActivity : AppCompatActivity() {
 
     private fun returnTasksBetweenDates(initDay: Date, lastDay: Date): ArrayList<TaskList>{
 
-        var listOfTask = ArrayList<TaskList>()
-        var listOfTODOTask = ArrayList<Task>()
-        var listOfDONETask = ArrayList<Task>()
+        val listOfTask = ArrayList<TaskList>()
+        val listOfTODOTask = ArrayList<Task>()
+        val listOfDONETask = ArrayList<Task>()
 
         for (taskList in arrayTasksList) {
             if (taskList.status == Group.TODO) {
@@ -112,7 +112,7 @@ class CalendarActivity : AppCompatActivity() {
 
     private fun convertToListOfEvents(tasksLists: ArrayList<TaskList>): ArrayList<MyEventDay>{
 
-        var listOfEventDays = ArrayList<MyEventDay>()
+        val listOfEventDays = ArrayList<MyEventDay>()
         for (taskList in tasksLists) {
             if (taskList.status == Group.TODO){
                 for (task in taskList.tasks) {

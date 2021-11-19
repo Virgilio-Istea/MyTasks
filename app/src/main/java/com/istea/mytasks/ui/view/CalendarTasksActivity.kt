@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.istea.mytasks.R
 import com.istea.mytasks.adapter.CalendarTaskAdapter
-import com.istea.mytasks.model.Group
-import com.istea.mytasks.model.Task
 import com.istea.mytasks.model.TaskList
 
 class CalendarTasksActivity : AppCompatActivity() {

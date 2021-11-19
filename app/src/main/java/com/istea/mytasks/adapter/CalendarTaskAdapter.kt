@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.istea.mytasks.R
 import com.istea.mytasks.model.Group
-import com.istea.mytasks.model.Task
 import com.istea.mytasks.model.TaskList
 import com.istea.mytasks.model.TaskWithStatus
 import java.text.SimpleDateFormat
@@ -20,21 +19,13 @@ class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerVi
     var tasks = ArrayList<TaskWithStatus>()
     class ViewHolder(view: View):RecyclerView.ViewHolder(view){
 
-        val title: TextView
-        var dateTask : TextView
-        val descriptionTask : TextView
-        var dateReminder : TextView
-        var status : TextView
-        var soundDescription : Button
+        val title: TextView = view.findViewById(R.id.ta_i_title)
+        var dateTask : TextView = view.findViewById(R.id.ta_i_hora)
+        val descriptionTask : TextView = view.findViewById(R.id.ta_i_description)
+        var dateReminder : TextView = view.findViewById(R.id.ta_i_recordatorio)
+        var status : TextView = view.findViewById(R.id.ta_i_status)
+        var soundDescription : Button = view.findViewById(R.id.ta_i_playDescription)
 
-        init {
-            title = view.findViewById(R.id.ta_i_title)
-            dateTask = view.findViewById(R.id.ta_i_hora)
-            descriptionTask = view.findViewById(R.id.ta_i_description)
-            dateReminder = view.findViewById(R.id.ta_i_recordatorio)
-            status = view.findViewById(R.id.ta_i_status)
-            soundDescription = view.findViewById(R.id.ta_i_playDescription)
-        }
     }
 
     override fun getItemCount(): Int {
@@ -66,13 +57,13 @@ class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerVi
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val timeStampFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
-        val GetDate = tasks[position].dateTask
-        val dateTaskStr: String = timeStampFormat.format(GetDate)
+        val getDate = tasks[position].dateTask
+        val dateTaskStr: String = timeStampFormat.format(getDate)
         var dateTaskReminderStr = ""
 
         if(tasks[position].dateReminder != null) {
-            val GetDateReminder = tasks[position].dateReminder
-            dateTaskReminderStr = timeStampFormat.format(GetDateReminder)
+            val getDateReminder = tasks[position].dateReminder
+            dateTaskReminderStr = timeStampFormat.format(getDateReminder!!)
         }
 
 
@@ -82,7 +73,7 @@ class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerVi
             holder.soundDescription.isVisible = true
 
             holder.soundDescription.setOnClickListener(){
-                var mp = MediaPlayer()
+                val mp = MediaPlayer()
                 mp.setDataSource(tasks[position].soundFile)
                 mp.prepare()
                 mp.start()

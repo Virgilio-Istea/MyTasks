@@ -1,7 +1,5 @@
 package com.istea.mytasks.model
 
-import kotlin.properties.Delegates
-
 class ExpandableTasks {
     companion object{
         const val PARENT = 1
@@ -10,7 +8,7 @@ class ExpandableTasks {
     lateinit var parent : TaskList
     var type : Int
     lateinit var child : Task
-    lateinit var status : String
+    var status : String
     var isExpanded : Boolean
     private var isCloseShown : Boolean
 

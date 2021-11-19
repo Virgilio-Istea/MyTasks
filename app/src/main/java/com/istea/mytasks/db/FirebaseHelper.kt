@@ -14,7 +14,6 @@ import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.messaging.FirebaseMessaging
 import com.istea.mytasks.model.*
 import java.util.*
-import java.util.Collections.replaceAll
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -45,7 +44,7 @@ class FirebaseHelper {
 
     }
 
-    fun getUser() : String{
+    private fun getUser() : String{
         return Firebase.auth.currentUser!!.uid
     }
 
@@ -101,7 +100,7 @@ class FirebaseHelper {
                 }
     }
 
-    fun getNotificationToken() {
+    private fun getNotificationToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w("", "Fetching FCM registration token failed", task.exception)
@@ -292,7 +291,7 @@ class FirebaseHelper {
         //TODO check document size and create a new one in case it is full
 
         val notificationId = UUID.randomUUID().toString()
-            .replace("-", "").toUpperCase();
+            .replace("-", "").toUpperCase(Locale.ROOT)
 
         notificationsDB.get()
             .addOnSuccessListener { document ->
