@@ -25,7 +25,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             // Get Message details
             val title = remoteMessage.data["title"]
             val taskTime = remoteMessage.data["taskTime"]
-            val message = remoteMessage.data["message"]
+            var message = remoteMessage.data["message"]
+            val reminderId = remoteMessage.data["reminderId"]
+
+            val taskTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val taskTimeSTRFormat = SimpleDateFormat("dd-MM-yyyy - HH:mm - ", Locale.getDefault())
+
+            val taskTimeDate = taskTimeFormat.parse(taskTime!!)
+
+            val taskTimeStr = taskTimeSTRFormat.format(taskTimeDate!!)
+
+            message = taskTimeStr + message
 
             // Check that 'Automatic Date and Time' settings are turned ON.
             // If it's not turned on, Return
@@ -40,10 +50,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             if (isScheduled == true) {
                 // This is Scheduled Notification, Schedule it
                 val scheduledTime = remoteMessage.data["scheduledTime"]
-                scheduleAlarm(scheduledTime, title, message)
+                scheduleAlarm(scheduledTime, title, message, reminderId)
             } else {
                 // This is not scheduled notification, show it now
-                showNotification(title!!, message!!)
+                showNotification(title!!, message)
             }
         }
     }
@@ -51,14 +61,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun scheduleAlarm(
         scheduledTimeString: String?,
         title: String?,
-        message: String?
+        message: String?,
+        reminderId: String?
     ) {
         val alarmMgr = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmIntent =
             Intent(applicationContext, NotificationBroadcastReceiver::class.java).let { intent ->
                 intent.putExtra(NOTIFICATION_TITLE, title)
                 intent.putExtra(NOTIFICATION_MESSAGE, message)
-                PendingIntent.getBroadcast(applicationContext, 0, intent, 0)
+                intent.putExtra("id", reminderId)
+                PendingIntent.getBroadcast(applicationContext, reminderId!!.toInt(), intent, 0)
             }
 
         // Parse Schedule time
@@ -77,7 +89,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 )
             }
         }
-
     }
 
     private fun showNotification(title: String, message: String) {

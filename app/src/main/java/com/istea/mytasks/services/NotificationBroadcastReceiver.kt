@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.istea.mytasks.db.FirebaseHelper
 import com.istea.mytasks.util.ScheduledWorker
 import com.istea.mytasks.util.ScheduledWorker.Companion.NOTIFICATION_MESSAGE
 import com.istea.mytasks.util.ScheduledWorker.Companion.NOTIFICATION_TITLE
@@ -17,7 +18,11 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
         intent?.let {
             val title = it.getStringExtra(NOTIFICATION_TITLE)
             val message = it.getStringExtra(NOTIFICATION_MESSAGE)
+            var reminderId = it.getStringExtra("Id")
 
+            var firebase = FirebaseHelper()
+
+            firebase.deleteNotification(reminderId!!)
             // Create Notification Data
             val notificationData = Data.Builder()
                 .putString(NOTIFICATION_TITLE, title)

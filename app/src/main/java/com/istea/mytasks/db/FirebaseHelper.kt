@@ -301,7 +301,7 @@ class FirebaseHelper {
         //TODO check document size and create a new one in case it is full
 
         val notificationId = UUID.randomUUID().toString()
-            .replace("-", "").toUpperCase(Locale.ROOT)
+            .replace("-", "").toUpperCase(Locale.ROOT).hashCode()
 
         val dateFormatter = SimpleDateFormat("dd/MM/yyyy - HH:mm - ", Locale.getDefault())
 
@@ -315,8 +315,6 @@ class FirebaseHelper {
             "topic" to getUser()
         )
 
-
-
         notificationsDB.get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
@@ -328,7 +326,7 @@ class FirebaseHelper {
                                 task.dateTask,
                                 task.dateReminder!!,
                                 getUser(),
-                                notificationId
+                                notificationId.toString()
                             )
                         )
                     )
@@ -340,7 +338,7 @@ class FirebaseHelper {
                         task.dateTask,
                         task.dateReminder!!,
                         getUser(),
-                        notificationId
+                        notificationId.toString()
                     ))
                     notificationsDB.set(NotificationList(notifications))
                 }
@@ -349,7 +347,7 @@ class FirebaseHelper {
                 Log.w("", "Error getting documents: ", exception)
             }
 
-        task.reminderId = notificationId
+        task.reminderId = notificationId.toString()
 
         return task
     }
@@ -373,6 +371,35 @@ class FirebaseHelper {
                             doc["reminderId"].toString())
                         notificationsDB.update(
                                 "notifications",
+                            FieldValue.arrayRemove( notification ))
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("", "Error getting documents: ", exception)
+            }
+
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun deleteNotification(id : String){
+        db = Firebase.firestore
+        val notificationsDB = db.collection("notifications").document(getUser())
+
+        notificationsDB.get()
+            .addOnSuccessListener { document ->
+
+                val notificationsDoc = document.data?.get("notifications") as ArrayList<HashMap<*,*>>
+
+                for (doc in notificationsDoc){
+                    if (doc["reminderId"].toString() == id){
+                        val notification = Notification(doc["title"].toString(),
+                            (doc["dateTask"] as Timestamp).toDate(),
+                            (doc["dateReminder"] as Timestamp).toDate(),
+                            doc["userId"].toString(),
+                            doc["reminderId"].toString())
+                        notificationsDB.update(
+                            "notifications",
                             FieldValue.arrayRemove( notification ))
                     }
                 }
