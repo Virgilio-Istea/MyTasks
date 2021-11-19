@@ -28,14 +28,14 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="24dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/titulo_de_la_actividad"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ta_title"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/ta_title" />
 
     <EditText
         android:id="@+id/ta_et_task_fecha"
@@ -44,6 +44,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
+        android:autofillHints=""
         android:clickable="true"
         android:ems="10"
         android:focusable="true"
@@ -55,8 +56,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_titulo"
-        app:layout_constraintVertical_bias="0.0"
-        android:autofillHints="" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/ta_et_task_descripcion"
@@ -79,18 +79,31 @@
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_fecha"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/ta_btn_task_descripcion_audio"
-        android:layout_width="50dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/roundedbutton"
+    <LinearLayout
+        android:layout_width="366dp"
+        android:layout_height="55dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/ta_et_task_recordar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.066"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion">
+
+        <Button
+            android:id="@+id/ta_btn_task_descripcion_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="25dp"
+            android:text="Record" />
+
+        <Button
+            android:id="@+id/ta_btn_task_play_description_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play" />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/ta_et_task_hora"
@@ -99,6 +112,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/hora_de_actividad"
         android:inputType="time"
@@ -107,8 +121,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/ta_et_task_fecha"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_titulo"
-        app:layout_constraintVertical_bias="0.0"
-        android:autofillHints="" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/ta_bt_createTask"
@@ -131,15 +144,15 @@
         android:text="Hacerme Acordar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.125"
+        app:layout_constraintHorizontal_bias="0.142"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
-        app:layout_constraintVertical_bias="0.242" />
+        app:layout_constraintVertical_bias="0.245" />
 
     <EditText
         android:id="@+id/ta_et_task_fecha_recordatorio"
-        android:layout_width="191dp"
-        android:layout_height="44dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="24dp"
@@ -157,7 +170,7 @@
 
     <Spinner
         android:id="@+id/ta_sp_groups"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
@@ -172,8 +185,8 @@
 
     <EditText
         android:id="@+id/ta_et_task_hora_recordatorio"
-        android:layout_width="160dp"
-        android:layout_height="43dp"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="24dp"
@@ -188,17 +201,5 @@
         app:layout_constraintStart_toEndOf="@+id/ta_et_task_fecha_recordatorio"
         app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
         app:layout_constraintVertical_bias="0.273" />
-
-    <Button
-        android:id="@+id/ta_btn_task_play_description_audio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play"
-        app:layout_constraintBottom_toTopOf="@+id/ta_et_task_recordar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.057"
-        app:layout_constraintStart_toEndOf="@+id/ta_btn_task_descripcion_audio"
-        app:layout_constraintTop_toBottomOf="@+id/ta_et_task_descripcion"
-        app:layout_constraintVertical_bias="0.688" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
