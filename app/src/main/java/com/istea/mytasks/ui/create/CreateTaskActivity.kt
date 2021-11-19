@@ -104,7 +104,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         task = Task("", Calendar.getInstance().time, "", Calendar.getInstance().time, "", "", "")
 
         initializeFields()
-        giveMicStoragePermissions()
 
         if (create){
             grupoId = (intent.getSerializableExtra("group") as Group).documentId
@@ -504,8 +503,9 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         playButton = findViewById(R.id.ta_btn_task_play_description_audio)
 
         playButton.isEnabled = false
+        guardarVoz.isEnabled = false
 
-        guardarVoz.isEnabled = getMicrophoneAvailable()
+        giveMicStoragePermissions()
 
     }
 
