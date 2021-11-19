@@ -321,10 +321,6 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             mp.start()
 
         }
-
-        if(!guardarVoz.isEnabled){
-            Toast.makeText(this,"Cierre las aplicaciones que esten usando el microfono y vuelva a acceder a crear la actividad",Toast.LENGTH_SHORT).show()
-        }
     }
 
     override fun onRequestPermissionsResult(
@@ -403,7 +399,10 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
             )
         }
         else {
-            guardarVoz.isEnabled = true
+            guardarVoz.isEnabled = getMicrophoneAvailable()
+            if(!guardarVoz.isEnabled){
+                Toast.makeText(this,"Cierre las aplicaciones que esten usando el microfono y vuelva a acceder a crear la actividad",Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
