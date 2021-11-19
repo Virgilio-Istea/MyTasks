@@ -294,9 +294,13 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
         guardarVoz.setOnTouchListener { _, event ->
 
-            if (fileNamePath == "") {
-                createFilePathName()
+            if (fileNamePath != "") {
+                val file = File(fileNamePath)
+                if(!file.exists()) {
+                    createFilePathName()
+                }
             }
+            else {createFilePathName()}
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -368,6 +372,7 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
     }
 
     private fun enablePlayButton(){
+            playButton.setBackgroundColor(getColor(android.R.color.holo_purple))
             playButton.isEnabled = true
     }
 
@@ -451,12 +456,14 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
 
             mRecorder.prepare()
             mRecorder.start()
+            guardarVoz.setBackgroundColor(getColor(android.R.color.holo_green_light))
     }
 
     private fun stopRecording() {
             mRecorder.stop()
             mRecorder.reset()
             mRecorder.release()
+            guardarVoz.setBackgroundColor(getColor(android.R.color.holo_purple))
             enablePlayButton()
     }
 
@@ -492,13 +499,14 @@ class CreateTaskActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListen
         dateTask.setText(setTodayDate())
 
         guardarVoz = findViewById(R.id.ta_btn_task_descripcion_audio)
+        guardarVoz.setBackgroundColor(getColor(android.R.color.holo_purple))
 
         fileNamePath = task.voicePathFile
         playButton = findViewById(R.id.ta_btn_task_play_description_audio)
+
         playButton.isEnabled = false
 
         guardarVoz.isEnabled = getMicrophoneAvailable()
-
 
     }
 
