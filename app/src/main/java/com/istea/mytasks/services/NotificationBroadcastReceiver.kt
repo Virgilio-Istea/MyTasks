@@ -18,9 +18,9 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
         intent?.let {
             val title = it.getStringExtra(NOTIFICATION_TITLE)
             val message = it.getStringExtra(NOTIFICATION_MESSAGE)
-            var reminderId = it.getStringExtra("Id")
+            val reminderId = it.getStringExtra("Id")
 
-            var firebase = FirebaseHelper()
+            val firebase = FirebaseHelper()
 
             firebase.deleteNotification(reminderId!!)
             // Create Notification Data

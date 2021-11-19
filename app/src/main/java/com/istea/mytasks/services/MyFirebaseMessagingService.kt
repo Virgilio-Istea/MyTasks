@@ -69,7 +69,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Intent(applicationContext, NotificationBroadcastReceiver::class.java).let { intent ->
                 intent.putExtra(NOTIFICATION_TITLE, title)
                 intent.putExtra(NOTIFICATION_MESSAGE, message)
-                intent.putExtra("id", reminderId)
+                intent.putExtra("Id", reminderId)
                 PendingIntent.getBroadcast(applicationContext, reminderId!!.toInt(), intent, 0)
             }
 
