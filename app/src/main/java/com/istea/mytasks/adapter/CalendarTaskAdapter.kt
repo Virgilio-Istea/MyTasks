@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.istea.mytasks.R
@@ -84,8 +85,14 @@ class CalendarTaskAdapter(private val dataset: ArrayList<TaskList>) : RecyclerVi
             holder.soundDescription.setOnClickListener(){
                 var mp = MediaPlayer()
                 mp.setDataSource(tasks[position].soundFile)
-                mp.prepare()
-                mp.start()
+
+                try {
+                    mp.prepare()
+                    mp.start()
+                } catch(ex:Exception) {
+
+                }
+
             }
         }
 
